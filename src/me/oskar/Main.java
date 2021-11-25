@@ -13,21 +13,19 @@ public class Main {
 
         final var code =
                 """
-                func x() {
-                    puts 2;
-                }
-                
-                func fac(n) {
-                    puts x();
-                    if n == 0 {
-                        return 1;
-                    } else {
-                        return n * fac(n - 1);
-                    }
+                func test() {
+                    var x = 2;
+                    var y = 2;
+                    puts x + y;
                 }
                 
                 func main() {
-                    puts fac(5);
+                    var x = 2;
+                    if true {
+                        var x = 3;
+                        puts x;
+                    }
+                    puts x;
                 }
                 """;
 

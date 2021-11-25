@@ -10,7 +10,6 @@ import me.oskar.compiler.symbol.SymbolTable;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class Compiler {
 
@@ -23,7 +22,7 @@ public class Compiler {
         final var bytecode = new ByteArrayOutputStream();
         final var bytecodeOut = new DataOutputStream(bytecode);
 
-        globalsCount = node.getVariables().size() + node.getFunctions().size();
+        globalsCount = node.getVariables().size();
         compile(node, bytecodeOut);
 
         return getBytecode(bytecode.toByteArray());
@@ -60,13 +59,19 @@ public class Compiler {
             compile(f, out);
         }
 
-        functionsPosition = out.size();
+        compile(node.getMainFunction(), out);
 
+        functionsPosition = out.size();
         for (VariableDeclarationNode v : node.getVariables()) {
             compile(v, out);
         }
 
-        compile(node.getMainFunction(), out);
+        final var mainSymbol = symbolTable.resolve("main");
+        final var mainFunction = symbolTable.getFunction(mainSymbol);
+        emit(OpCode.ASF, mainFunction.getScope().getLocalsCount(), out);
+        emit(OpCode.CALL, mainFunction.getPosition(), out);
+        emit(OpCode.RSF, out);
+        emit(OpCode.HALT, out);
     }
 
     private void compile(final NumberNode node, final DataOutputStream out) {
@@ -124,7 +129,7 @@ public class Compiler {
 
         var skipSize = consequenceBytes.size();
         if (node.getAlternative() != null) {
-            // When if node has an alternative, an additional JMP instuction will be compiled at
+            // When if node has an alternative, an additional JMP instruction will be compiled at
             // the beginning of said block which also has to be skipped.
             skipSize += 5;
         }
@@ -163,6 +168,8 @@ public class Compiler {
             symbol.initialize();
             compile(node.getValue(), out);
             emit(OpCode.STORE_G, symbol.getIndex(), out);
+        } else if (symbolTable.existsOnCurrentScope(node.getName())) {
+            throw new IllegalStateException("Symbol " + node.getName() + " already defined on current scope");
         } else {
             final var newSymbol = symbolTable.define(node.getName());
             newSymbol.initialize();
@@ -204,6 +211,10 @@ public class Compiler {
     }
 
     private void compile(final FunctionNode node, final DataOutputStream out) {
+        if (symbolTable.existsOnCurrentScope(node.getName())) {
+            throw new IllegalStateException("Symbol " + node.getName() + " already defined on current state");
+        }
+
         final var symbol = symbolTable.define(node.getName());
         symbolTable.enterFunctionScope();
 
@@ -218,13 +229,9 @@ public class Compiler {
 
         compile(node.getBody(), out);
 
-        if (node.getName().equals("main")) { // TODO: find better way
-            emit(OpCode.HALT, out);
-        } else {
-            emit(OpCode.CONST, constantPool.addNilConstant(), out);
-            emit(OpCode.STORE_R, out);
-            emit(OpCode.RET, out);
-        }
+        emit(OpCode.CONST, constantPool.addNilConstant(), out);
+        emit(OpCode.STORE_R, out);
+        emit(OpCode.RET, out);;
 
         symbolTable.leaveFunctionScope();
     }

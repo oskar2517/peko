@@ -21,7 +21,10 @@ public class Stack<E> {
             throw new IllegalStateException("Stack underflow");
         }
 
-        return stack[sp];
+        final var v = stack[sp];
+        stack[sp] = null;
+
+        return v;
     }
 
     public void set(final int index, final E o) {

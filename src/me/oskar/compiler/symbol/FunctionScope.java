@@ -35,6 +35,10 @@ public class FunctionScope {
         return cScope.resolve(name);
     }
 
+    public boolean existsOnCurrentScope(final String name) {
+        return blockScope.exists(name);
+    }
+
     public boolean exists(final String name) {
         return resolve(name) != null;
     }

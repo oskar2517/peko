@@ -32,6 +32,14 @@ public class GlobalScope {
         return symbols.get(name);
     }
 
+    public boolean existsOnCurrentScope(final String name) {
+        if (functionScope == null) {
+            return symbols.containsKey(name);
+        } else {
+            return functionScope.existsOnCurrentScope(name);
+        }
+    }
+
     public void enterFunctionScope() {
         functionScope = new FunctionScope();
     }
