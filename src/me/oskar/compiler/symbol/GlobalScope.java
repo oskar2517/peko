@@ -20,9 +20,7 @@ public class GlobalScope {
     }
 
     public Symbol defineParameter(final String name, final int index) {
-        final var symbol = new Symbol(index, false);
-        symbols.put(name, symbol);
-        return symbol;
+        return functionScope.defineParameter(name, index);
     }
 
     public Symbol resolve(final String name) {

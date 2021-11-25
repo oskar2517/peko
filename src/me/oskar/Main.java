@@ -13,16 +13,20 @@ public class Main {
 
         final var code =
                 """
-                var x = 2;
-                
-                func test() {
-                    puts x;
+                func sub(x, y) {
+                    return x - y;
+                }
+                            
+                func add(x, y) {
+                    x = 2;
+                    return x;
                 }
                 
                 func main() {
-                    var x = 3;
-                    test();
-                    puts x;
+                    var y = 3;
+                    var r = add(y, 2);
+                    puts y;
+                    puts r;
                 }
                 """;
 
