@@ -33,7 +33,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new NumberObject(value - oc.getValue());
         } else {
-            return super.add(o);
+            return super.sub(o);
         }
     }
 
@@ -42,7 +42,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new NumberObject(value * oc.getValue());
         } else {
-            return super.add(o);
+            return super.mul(o);
         }
     }
 
@@ -55,7 +55,7 @@ public class NumberObject extends LObject {
 
             return new NumberObject(value / oc.getValue());
         } else {
-            return super.add(o);
+            return super.div(o);
         }
     }
 
@@ -68,7 +68,7 @@ public class NumberObject extends LObject {
 
             return new NumberObject(value % oc.getValue());
         } else {
-            return super.add(o);
+            return super.mod(o);
         }
     }
 
@@ -86,7 +86,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value != oc.getValue());
         } else {
-            return super.add(o);
+            return super.ne(o);
         }
     }
 
@@ -95,7 +95,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value < oc.getValue());
         } else {
-            return super.add(o);
+            return super.lt(o);
         }
     }
 
@@ -104,7 +104,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value <= oc.getValue());
         } else {
-            return super.add(o);
+            return super.le(o);
         }
     }
 
@@ -113,7 +113,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value > oc.getValue());
         } else {
-            return super.add(o);
+            return super.gt(o);
         }
     }
 
@@ -122,7 +122,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value >= oc.getValue());
         } else {
-            return super.add(o);
+            return super.ge(o);
         }
     }
 
