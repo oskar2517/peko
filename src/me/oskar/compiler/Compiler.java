@@ -218,7 +218,7 @@ public class Compiler {
         final var symbol = symbolTable.define(node.getName());
         symbolTable.enterFunctionScope();
 
-        final var compileTimeFunction = new CompileTimeFunction(node.getName(), out.size(), symbolTable.getFunctionScope());
+        final var compileTimeFunction = new CompileTimeFunction(out.size(), node.getParameters().size(), symbolTable.getFunctionScope());
         symbolTable.addFunction(symbol, compileTimeFunction);
 
         var i = -1;
@@ -247,6 +247,10 @@ public class Compiler {
 
         if (compileTimeFunction == null) {
             throw new IllegalStateException("Symbol " + node.getFunctionName() + " is not a function");
+        }
+
+        if (node.getArguments().size() != compileTimeFunction.getParametersCount()) {
+            throw new IllegalStateException("Wrong number of arguments to function " + node.getFunctionName());
         }
 
         for (Node a : node.getArguments()) {

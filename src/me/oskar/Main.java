@@ -24,7 +24,7 @@ public class Main {
                 
                 func main() {
                     var y = 3;
-                    var r = add(y, 2);
+                    var r = add(y);
                     puts y;
                     puts r;
                 }
