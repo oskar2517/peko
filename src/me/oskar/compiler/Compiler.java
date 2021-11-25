@@ -193,6 +193,9 @@ public class Compiler {
             Error.error("Symbol `%s` undefined.", node.getValue());
             return;
         }
+        if (symbolTable.existsFunction(symbol)) {
+            Error.error("Illegal use of function `%s`.", node.getName());
+        }
         compile(node.getValue(), out);
         if (symbol.isGlobal()) {
             emit(OpCode.STORE_G, symbol.getIndex(), out);
@@ -230,6 +233,9 @@ public class Compiler {
 
         var i = -node.getParameters().size();
         for (IdentNode p : node.getParameters()) {
+            if (symbolTable.existsOnCurrentScope(p.getValue())) {
+                Error.error(String.format("Symbol `%s` is already defined on this scope.", p.getValue()));
+            }
             symbolTable.defineParameter(p.getValue(), i);
             i++;
         }

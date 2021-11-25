@@ -6,7 +6,7 @@ public class FunctionScope {
 
     private BlockScope blockScope = new BlockScope(null);
     private int symbolIndex = 0;
-    private HashMap<String, Symbol> parameters = new HashMap<>();
+    private final HashMap<String, Symbol> parameters = new HashMap<>();
 
     public void enterBlockScope() {
         blockScope = new BlockScope(blockScope);
@@ -49,7 +49,7 @@ public class FunctionScope {
     }
 
     public boolean existsOnCurrentScope(final String name) {
-        return blockScope.exists(name);
+        return parameters.containsKey(name) || blockScope.exists(name);
     }
 
     public boolean exists(final String name) {

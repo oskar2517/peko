@@ -14,20 +14,11 @@ public class Main {
         final var code =
                 """
                 func modInv(a, b) {
-                    var i = 0;
-                    while i < b {
-                        if (a * i) % b == 1 {
-                            return i;
-                        }
-                        
-                        i = i + 1;
-                    }
-                    
-                    return 0;
+                    var a = 2;
                 }
                 
                 func main() {
-                    puts modInv(42, 2017);
+                    modInv(2, 3);
                 }
                 """;
 
