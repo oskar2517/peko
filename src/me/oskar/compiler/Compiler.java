@@ -18,7 +18,6 @@ public class Compiler {
     private final SymbolTable symbolTable = new SymbolTable();
     private int globalsCount = 0;
     private int functionsPosition = 0;
-    private final HashMap<String, CompileTimeFunction> functions = new HashMap<>();
 
     public byte[] compile(final FileNode node) throws IOException {
         final var bytecode = new ByteArrayOutputStream();
@@ -158,12 +157,21 @@ public class Compiler {
     }
 
     private void compile(final VariableDeclarationNode node, final DataOutputStream out) {
-        compile(node.getValue(), out);
-        final var symbol = symbolTable.define(node.getName());
-        if (symbol.isGlobal()) {
+        final var symbol = symbolTable.resolve(node.getName());
+
+        if (symbol != null && symbol.isGlobal() && !symbol.isInitialized()) {
+            symbol.initialize();
+            compile(node.getValue(), out);
             emit(OpCode.STORE_G, symbol.getIndex(), out);
         } else {
-            emit(OpCode.STORE_L, symbol.getIndex(), out);
+            final var newSymbol = symbolTable.define(node.getName());
+            newSymbol.initialize();
+            compile(node.getValue(), out);
+            if (newSymbol.isGlobal()) {
+                emit(OpCode.STORE_G, newSymbol.getIndex(), out);
+            } else {
+                emit(OpCode.STORE_L, newSymbol.getIndex(), out);
+            }
         }
     }
 
@@ -185,6 +193,9 @@ public class Compiler {
         if (symbol == null) {
             throw new IllegalStateException("Undefined symbol " + node.getValue());
         }
+        if (symbolTable.existsFunction(symbol)) {
+            throw new IllegalStateException("Illegal use of function " + node.getValue());
+        }
         if (symbol.isGlobal()) {
             emit(OpCode.LOAD_G, symbol.getIndex(), out);
         } else {
@@ -193,10 +204,11 @@ public class Compiler {
     }
 
     private void compile(final FunctionNode node, final DataOutputStream out) {
+        final var symbol = symbolTable.define(node.getName());
         symbolTable.enterFunctionScope();
 
         final var compileTimeFunction = new CompileTimeFunction(node.getName(), out.size(), symbolTable.getFunctionScope());
-        functions.put(node.getName(), compileTimeFunction);
+        symbolTable.addFunction(symbol, compileTimeFunction);
 
         var i = -1;
         for (IdentNode p : node.getParameters()) {
@@ -218,10 +230,16 @@ public class Compiler {
     }
 
     private void compile(final CallNode node, final DataOutputStream out) {
-        final var compileTimeFunction = functions.get(node.getFunctionName());
+        final var symbol = symbolTable.resolve(node.getFunctionName());
+
+        if (symbol == null) {
+            throw new IllegalStateException("Symbol " + node.getFunctionName() + " not defined");
+        }
+
+        final var compileTimeFunction = symbolTable.getFunction(symbol);
 
         if (compileTimeFunction == null) {
-            throw new IllegalStateException("Function " + node.getFunctionName() + " not defined");
+            throw new IllegalStateException("Symbol " + node.getFunctionName() + " is not a function");
         }
 
         for (Node a : node.getArguments()) {

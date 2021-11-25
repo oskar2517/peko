@@ -66,7 +66,7 @@ public class ConstantPool {
         return buffer.toByteArray();
     }
 
-    public static ArrayList<LObject> fromDateInputStream(final DataInputStream in) throws IOException {
+    public static ArrayList<LObject> fromDataInputStream(final DataInputStream in) throws IOException {
         final var pool = new ArrayList<LObject>();
 
         final var poolSize = in.readInt();

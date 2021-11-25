@@ -31,7 +31,7 @@ public class VirtualMachine {
         if (in.readInt() != 0xC0DE) {
             throw new IllegalStateException("Not a valid bytecode file!");
         }
-        constantPool = ConstantPool.fromDateInputStream(in);
+        constantPool = ConstantPool.fromDataInputStream(in);
 
         final var globalsCount = in.readInt();
         globals = new LObject[globalsCount];

@@ -1,8 +1,13 @@
 package me.oskar.compiler.symbol;
 
+import me.oskar.compiler.function.CompileTimeFunction;
+
+import java.util.HashMap;
+
 public class SymbolTable {
 
-    final GlobalScope globalScope = new GlobalScope();
+    private final GlobalScope globalScope = new GlobalScope();
+    private final HashMap<Symbol, CompileTimeFunction> functions = new HashMap<>();
 
     public Symbol define(final String name) {
         return globalScope.define(name);
@@ -30,6 +35,18 @@ public class SymbolTable {
 
     public void leaveBlockScope() {
         globalScope.leaveBlockScope();
+    }
+
+    public void addFunction(final Symbol symbol, final CompileTimeFunction function) {
+        functions.put(symbol, function);
+    }
+
+    public CompileTimeFunction getFunction(final Symbol symbol) {
+        return functions.get(symbol);
+    }
+
+    public boolean existsFunction(final Symbol symbol) {
+        return functions.containsKey(symbol);
     }
 
     public FunctionScope getFunctionScope() {

@@ -11,10 +11,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        // TODO: use smaller immediates where possible (eg. call parameters)
         final var code =
                 """
+                func x() {
+                    puts 2;
+                }
+                
                 func fac(n) {
+                    puts x();
                     if n == 0 {
                         return 1;
                     } else {
