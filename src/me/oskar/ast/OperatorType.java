@@ -12,6 +12,8 @@ public enum OperatorType {
     MUL,
     DIV,
     MOD,
+    AND,
+    OR,
 
     NOT,
     NEG

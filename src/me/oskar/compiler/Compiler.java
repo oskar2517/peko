@@ -100,20 +100,48 @@ public class Compiler {
     }
 
     private void compile(final BinaryOperatorNode node, final DataOutputStream out) {
-        compile(node.getLeft(), out);
-        compile(node.getRight(), out);
         switch (node.getType()) {
-            case ADD -> emit(OpCode.ADD, out);
-            case SUB -> emit(OpCode.SUB, out);
-            case MUL -> emit(OpCode.MUL, out);
-            case DIV -> emit(OpCode.DIV, out);
-            case MOD -> emit(OpCode.MOD, out);
-            case EQ -> emit(OpCode.EQ, out);
-            case NE -> emit(OpCode.NE, out);
-            case LT -> emit(OpCode.LT, out);
-            case LE -> emit(OpCode.LE, out);
-            case GT -> emit(OpCode.GT, out);
-            case GE -> emit(OpCode.GE, out);
+            case AND -> {
+                compile(node.getLeft(), out);
+
+                final var rightBytes = new ByteArrayOutputStream();
+                final var rightOut = new DataOutputStream(rightBytes);
+                compile(node.getRight(), rightOut);
+
+                emit(OpCode.BRF, rightBytes.size() + 5, out);
+                writeToOut(out, rightBytes.toByteArray());
+                emit(OpCode.JMP, 5, out);
+                emit(OpCode.CONST, constantPool.addConstant(false), out);
+            }
+            case OR -> {
+                compile(node.getLeft(), out);
+
+                final var rightBytes = new ByteArrayOutputStream();
+                final var rightOut = new DataOutputStream(rightBytes);
+                compile(node.getRight(), rightOut);
+
+                emit(OpCode.BRT, rightBytes.size() + 5, out);
+                writeToOut(out, rightBytes.toByteArray());
+                emit(OpCode.JMP, 5, out);
+                emit(OpCode.CONST, constantPool.addConstant(true), out);
+            }
+            default -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                switch (node.getType()) {
+                    case ADD -> emit(OpCode.ADD, out);
+                    case SUB -> emit(OpCode.SUB, out);
+                    case MUL -> emit(OpCode.MUL, out);
+                    case DIV -> emit(OpCode.DIV, out);
+                    case MOD -> emit(OpCode.MOD, out);
+                    case EQ -> emit(OpCode.EQ, out);
+                    case NE -> emit(OpCode.NE, out);
+                    case LT -> emit(OpCode.LT, out);
+                    case LE -> emit(OpCode.LE, out);
+                    case GT -> emit(OpCode.GT, out);
+                    case GE -> emit(OpCode.GE, out);
+                }
+            }
         }
     }
 

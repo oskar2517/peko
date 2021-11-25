@@ -24,7 +24,45 @@ public class ExpressionParser {
     }
 
     public Node parseExpression() {
-        return parseComparison();
+        return parseDisjunction();
+    }
+
+    /**
+     * Parses expressions of the following types:
+     * - left || right
+     *
+     * @return The parsed node.
+     */
+    private Node parseDisjunction() {
+        var left = parseConjunction();
+
+        while (parser.getCurrentToken().getType() == TokenType.OR) {
+            parser.nextToken();
+            final var right = parseConjunction();
+
+            left = new BinaryOperatorNode(OperatorType.OR, left, right);
+        }
+
+        return left;
+    }
+
+    /**
+     * Parses expressions of the following types:
+     * - left && right
+     *
+     * @return The parsed node.
+     */
+    private Node parseConjunction() {
+        var left = parseComparison();
+
+        while (parser.getCurrentToken().getType() == TokenType.AND) {
+            parser.nextToken();
+            final var right = parseComparison();
+
+            left = new BinaryOperatorNode(OperatorType.AND, left, right);
+        }
+
+        return left;
     }
 
     /**

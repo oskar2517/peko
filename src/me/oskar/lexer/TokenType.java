@@ -26,6 +26,8 @@ public enum TokenType {
     GREATER_THAN,
     GREATER_THAN_OR_EQUAL,
     BANG,
+    OR,
+    AND,
 
     IF,
     ELSE,

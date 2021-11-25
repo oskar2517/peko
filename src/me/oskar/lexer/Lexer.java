@@ -157,6 +157,22 @@ public class Lexer {
             case '*': return new Token(TokenType.ASTERISK, "*");
             case '/': return new Token(TokenType.SLASH, "/");
             case '%': return new Token(TokenType.PERCENT, "%");
+            case '&': {
+                if (peekChar() == '&') {
+                    readChar();
+                    return new Token(TokenType.AND, "&&");
+                } else {
+                    return new Token(TokenType.ILLEGAL, "&");
+                }
+            }
+            case '|': {
+                if (peekChar() == '|') {
+                    readChar();
+                    return new Token(TokenType.OR, "||");
+                } else {
+                    return new Token(TokenType.ILLEGAL, "|");
+                }
+            }
             case '!': {
                 if (peekChar() == '=') {
                     readChar();

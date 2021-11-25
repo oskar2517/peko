@@ -13,12 +13,18 @@ public class Main {
 
         final var code =
                 """
-                func modInv(a, b) {
-                    var a = 2;
+                func trueFunc() {
+                    puts "true called";
+                    return true;
+                }
+                
+                func falseFunc() {
+                    puts "false called";
+                    return false;
                 }
                 
                 func main() {
-                    modInv(2, 3);
+                    puts falseFunc() || falseFunc() || falseFunc();
                 }
                 """;
 
