@@ -21,13 +21,6 @@ public class Main {
                     x = 2;
                     return x;
                 }
-                
-                func main() {
-                    var y = 3;
-                    var r = add(y);
-                    puts y;
-                    puts r;
-                }
                 """;
 
         final var lexer = new Lexer(code);

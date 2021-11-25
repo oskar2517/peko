@@ -1,6 +1,7 @@
 package me.oskar.parser;
 
 import me.oskar.ast.*;
+import me.oskar.error.Error;
 import me.oskar.lexer.Lexer;
 import me.oskar.lexer.TokenType;
 
@@ -191,7 +192,7 @@ public class ExpressionParser {
                 return new NilNode();
             }
             default -> {
-                parser.error("Unexpected token `" + parser.getCurrentToken().getLiteral() + "`");
+                Error.error("Unexpected token `%s`.", parser.getCurrentToken().getLiteral());
                 return null;
             }
         }

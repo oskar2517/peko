@@ -1,60 +1,76 @@
 package me.oskar.object;
 
+import me.oskar.error.Error;
+
 public class LObject {
 
     public LObject add(final LObject o) {
-        throw new IllegalStateException("+ operation not supported with these objects");
+        Error.error("Cannot perform operation `+` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject sub(final LObject o) {
-        throw new IllegalStateException("- operation not supported with these objects");
+        Error.error("Cannot perform operation `-` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject mul(final LObject o) {
-        throw new IllegalStateException("* operation not supported with these objects");
+        Error.error("Cannot perform operation `*` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject div(final LObject o) {
-        throw new IllegalStateException("/ operation not supported with these objects");
+        Error.error("Cannot perform operation `/` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject mod(final LObject o) {
-        throw new IllegalStateException("# operation not supported with these objects");
+        Error.error("Cannot perform operation `%s` on %s and %s.", "%", this, o);
+        return null;
     }
 
     public LObject eq(final LObject o) {
-        throw new IllegalStateException("== operation not supported with these objects");
+        Error.error("Cannot perform operation `==` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject ne(final LObject o) {
-        throw new IllegalStateException("!= operation not supported with these objects");
+        Error.error("Cannot perform operation `!=` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject lt(final LObject o) {
-        throw new IllegalStateException("< operation not supported with these objects");
+        Error.error("Cannot perform operation `<` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject le(final LObject o) {
-        throw new IllegalStateException("<= operation not supported with these objects");
+        Error.error("Cannot perform operation `<=` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject gt(final LObject o) {
-        throw new IllegalStateException("> operation not supported with these objects");
+        Error.error("Cannot perform operation `>` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject ge(final LObject o) {
-        throw new IllegalStateException(">= operation not supported with these objects");
+        Error.error("Cannot perform operation `>=` on %s and %s.", this, o);
+        return null;
     }
 
     public LObject not() {
-        throw new IllegalStateException("! operation not supported with these objects");
+        Error.error("Cannot perform operation `!` on %s.", this);
+        return null;
     }
 
     public LObject neg() {
-        throw new IllegalStateException("- operation not supported with these objects");
+        Error.error("Cannot perform operation `-` on %s.", this);
+        return null;
     }
 
     public boolean isTruthy() {
-        throw new IllegalStateException("object does not represent a truth value");
+        Error.error("Cannot cast %s to boolean.", this);
+        return false;
     }
 }

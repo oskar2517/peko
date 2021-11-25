@@ -1,5 +1,7 @@
 package me.oskar.object;
 
+import me.oskar.error.Error;
+
 public class NumberObject extends LObject {
 
     private final double value;
@@ -48,7 +50,7 @@ public class NumberObject extends LObject {
     public LObject div(final LObject o) {
         if (o instanceof NumberObject oc) {
             if (oc.getValue() == 0) {
-                throw new IllegalStateException("left expression cannot be zero in division");
+                Error.error("Division by zero.");
             }
 
             return new NumberObject(value / oc.getValue());
@@ -61,7 +63,7 @@ public class NumberObject extends LObject {
     public LObject mod(final LObject o) {
         if (o instanceof NumberObject oc) {
             if (oc.getValue() == 0) {
-                throw new IllegalStateException("left expression cannot be zero in modulo");
+                Error.error("Division by zero.");
             }
 
             return new NumberObject(value % oc.getValue());

@@ -1,5 +1,7 @@
 package me.oskar.vm;
 
+import me.oskar.error.Error;
+
 public class Stack<E> {
 
     private int sp = 0;
@@ -8,7 +10,7 @@ public class Stack<E> {
 
     public void push(final E o) {
         if (sp >= stack.length) {
-            throw new IllegalStateException("Stack overflow");
+            Error.error("Stack overflow.");
         }
 
         stack[sp] = o;
@@ -18,7 +20,7 @@ public class Stack<E> {
     public E pop() {
         sp--;
         if (sp < 0) {
-            throw new IllegalStateException("Stack underflow");
+            Error.error("Stack underflow.");
         }
 
         final var v = stack[sp];
@@ -29,7 +31,7 @@ public class Stack<E> {
 
     public void set(final int index, final E o) {
         if (index >= stack.length || index < 0) {
-            throw new IllegalStateException("Stack exceeded");
+            Error.error("Stack size exceeded.");
         }
 
         stack[index] = o;
@@ -37,7 +39,7 @@ public class Stack<E> {
 
     public E get(final int index) {
         if (index >= stack.length || index < 0) {
-            throw new IllegalStateException("Stack exceeded");
+            Error.error("Stack size exceeded.");
         }
 
         return stack[index];

@@ -2,6 +2,7 @@ package me.oskar.vm;
 
 import me.oskar.code.OpCode;
 import me.oskar.compiler.constant.ConstantPool;
+import me.oskar.error.Error;
 import me.oskar.object.LObject;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +30,7 @@ public class VirtualMachine {
     private void init() throws IOException {
         final var in = new DataInputStream(new ByteArrayInputStream(bytecode));
         if (in.readInt() != 0xC0DE) {
-            throw new IllegalStateException("Not a valid bytecode file!");
+            Error.error("Unexpected magic number. This file does not seem to contain Peko bytecode.");
         }
         constantPool = ConstantPool.fromDataInputStream(in);
 

@@ -6,6 +6,7 @@ import me.oskar.code.OpCode;
 import me.oskar.compiler.constant.ConstantPool;
 import me.oskar.compiler.function.CompileTimeFunction;
 import me.oskar.compiler.symbol.SymbolTable;
+import me.oskar.error.Error;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -57,6 +58,10 @@ public class Compiler {
 
         for (FunctionNode f : node.getFunctions()) {
             compile(f, out);
+        }
+
+        if (node.getMainFunction() == null) {
+            Error.error("Main function missing.");
         }
 
         compile(node.getMainFunction(), out);
@@ -169,7 +174,7 @@ public class Compiler {
             compile(node.getValue(), out);
             emit(OpCode.STORE_G, symbol.getIndex(), out);
         } else if (symbolTable.existsOnCurrentScope(node.getName())) {
-            throw new IllegalStateException("Symbol " + node.getName() + " already defined on current scope");
+            Error.error(String.format("Symbol `%s` is already defined on this scope.", node.getName()));
         } else {
             final var newSymbol = symbolTable.define(node.getName());
             newSymbol.initialize();
@@ -185,7 +190,8 @@ public class Compiler {
     private void compile(final VariableAssignNode node, final DataOutputStream out) {
         final var symbol = symbolTable.resolve(node.getName());
         if (symbol == null) {
-            throw new IllegalStateException("Undefined symbol " + node.getName());
+            Error.error("Symbol `%s` undefined.", node.getValue());
+            return;
         }
         compile(node.getValue(), out);
         if (symbol.isGlobal()) {
@@ -198,10 +204,11 @@ public class Compiler {
     private void compile(final IdentNode node, final DataOutputStream out) {
         final var symbol = symbolTable.resolve(node.getValue());
         if (symbol == null) {
-            throw new IllegalStateException("Undefined symbol " + node.getValue());
+            Error.error("Symbol `%s` undefined.", node.getValue());
+            return;
         }
         if (symbolTable.existsFunction(symbol)) {
-            throw new IllegalStateException("Illegal use of function " + node.getValue());
+            Error.error("Illegal use of function `%s`.", node.getValue());
         }
         if (symbol.isGlobal()) {
             emit(OpCode.LOAD_G, symbol.getIndex(), out);
@@ -212,7 +219,7 @@ public class Compiler {
 
     private void compile(final FunctionNode node, final DataOutputStream out) {
         if (symbolTable.existsOnCurrentScope(node.getName())) {
-            throw new IllegalStateException("Symbol " + node.getName() + " already defined on current state");
+            Error.error(String.format("Symbol `%s` is already defined on this scope.", node.getName()));
         }
 
         final var symbol = symbolTable.define(node.getName());
@@ -240,17 +247,19 @@ public class Compiler {
         final var symbol = symbolTable.resolve(node.getFunctionName());
 
         if (symbol == null) {
-            throw new IllegalStateException("Symbol " + node.getFunctionName() + " not defined");
+            Error.error("Symbol `%s` undefined.", node.getFunctionName());
         }
 
         final var compileTimeFunction = symbolTable.getFunction(symbol);
 
         if (compileTimeFunction == null) {
-            throw new IllegalStateException("Symbol " + node.getFunctionName() + " is not a function");
+            Error.error("Symbol `%s` is not a function.", node.getFunctionName());
+            return;
         }
 
         if (node.getArguments().size() != compileTimeFunction.getParametersCount()) {
-            throw new IllegalStateException("Wrong number of arguments to function " + node.getFunctionName());
+            Error.error("Wrong number of arguments to function `%s`. Expected %s, got %s.", node.getFunctionName(),
+                    compileTimeFunction.getParametersCount(), node.getArguments().size());
         }
 
         for (Node a : node.getArguments()) {

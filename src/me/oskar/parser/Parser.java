@@ -1,6 +1,7 @@
 package me.oskar.parser;
 
 import me.oskar.ast.*;
+import me.oskar.error.Error;
 import me.oskar.lexer.Lexer;
 import me.oskar.lexer.Token;
 import me.oskar.lexer.TokenType;
@@ -53,17 +54,8 @@ public class Parser {
      */
     protected void expectToken(final TokenType type) {
         if (currentToken.getType() != type) {
-            error("Unexpected token `" + currentToken.getLiteral() + "´");
+            Error.error("Unexpected token `%s`.", currentToken.getLiteral());
         }
-    }
-
-    /**
-     * Exits the program with an error message.
-     * @param message The error message to be shown.
-     */
-    protected void error(final String message) {
-        System.out.println(message);
-        System.exit(1);
     }
 
     /**

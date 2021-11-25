@@ -58,7 +58,7 @@ public class ConstantPool {
                 out.writeByte(ConstantType.STRING);
                 out.writeInt(stringBytes.length);
                 out.write(stringBytes);
-            } else if (c instanceof NilConstant cc) {
+            } else if (c instanceof NilConstant) {
                 out.writeByte(ConstantType.NIL);
             }
         }
@@ -87,10 +87,8 @@ public class ConstantPool {
                     final var value = new String(in.readNBytes(length), StandardCharsets.UTF_16);
                     pool.add(new StringObject(value));
                 }
-                case ConstantType.NIL -> {
-                    pool.add(new NilObject());
-                }
-                default -> throw new IllegalStateException("Unexpected value: " + constantType);
+                case ConstantType.NIL -> pool.add(new NilObject());
+                default -> throw new IllegalStateException("Unexpected object type: " + constantType);
             }
         }
 
