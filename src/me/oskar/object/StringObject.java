@@ -21,4 +21,13 @@ public class StringObject extends LObject {
     public LObject add(final LObject o) {
         return new StringObject(value + o.toString());
     }
+
+    @Override
+    public LObject eq(final LObject o) {
+        if (o instanceof StringObject oc) {
+            return new BooleanObject(value.equals(oc.value));
+        } else {
+            return new BooleanObject(false);
+        }
+    }
 }

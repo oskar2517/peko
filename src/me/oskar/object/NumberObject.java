@@ -77,7 +77,7 @@ public class NumberObject extends LObject {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value == oc.getValue());
         } else {
-            return super.add(o);
+            return new BooleanObject(false);
         }
     }
 

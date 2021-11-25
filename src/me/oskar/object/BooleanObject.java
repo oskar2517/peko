@@ -22,7 +22,7 @@ public class BooleanObject extends LObject {
         if (o instanceof BooleanObject oc) {
             return new BooleanObject(value == oc.getValue());
         } else {
-            return super.add(o);
+            return new BooleanObject(false);
         }
     }
 

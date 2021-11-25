@@ -228,10 +228,10 @@ public class Compiler {
         final var compileTimeFunction = new CompileTimeFunction(out.size(), node.getParameters().size(), symbolTable.getFunctionScope());
         symbolTable.addFunction(symbol, compileTimeFunction);
 
-        var i = -1;
+        var i = -node.getParameters().size();
         for (IdentNode p : node.getParameters()) {
             symbolTable.defineParameter(p.getValue(), i);
-            i--;
+            i++;
         }
 
         compile(node.getBody(), out);

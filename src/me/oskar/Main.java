@@ -13,13 +13,21 @@ public class Main {
 
         final var code =
                 """
-                func sub(x, y) {
-                    return x - y;
+                func modInv(a, b) {
+                    var i = 0;
+                    while i < b {
+                        if (a * i) % b == 1 {
+                            return i;
+                        }
+                        
+                        i = i + 1;
+                    }
+                    
+                    return 0;
                 }
-                            
-                func add(x, y) {
-                    x = 2;
-                    return x;
+                
+                func main() {
+                    puts modInv(42, 2017);
                 }
                 """;
 
