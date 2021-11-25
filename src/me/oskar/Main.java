@@ -13,18 +13,15 @@ public class Main {
 
         final var code =
                 """
+                var x = 2;
+                
                 func test() {
-                    var x = 2;
-                    var y = 2;
-                    puts x + y;
+                    puts x;
                 }
                 
                 func main() {
-                    var x = 2;
-                    if true {
-                        var x = 3;
-                        puts x;
-                    }
+                    var x = 3;
+                    test();
                     puts x;
                 }
                 """;

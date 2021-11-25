@@ -164,7 +164,7 @@ public class Compiler {
     private void compile(final VariableDeclarationNode node, final DataOutputStream out) {
         final var symbol = symbolTable.resolve(node.getName());
 
-        if (symbol != null && symbol.isGlobal() && !symbol.isInitialized()) {
+        if (symbol != null && symbol.isGlobal() && !symbol.isInitialized() && symbolTable.onGlobalScope()) {
             symbol.initialize();
             compile(node.getValue(), out);
             emit(OpCode.STORE_G, symbol.getIndex(), out);

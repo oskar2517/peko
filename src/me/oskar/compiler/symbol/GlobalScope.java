@@ -9,7 +9,7 @@ public class GlobalScope {
     private final HashMap<String, Symbol> symbols = new HashMap<>();
 
     public Symbol define(final String name) {
-        if (functionScope == null) {
+        if (onGlobalScope()) {
             final var symbol = new Symbol(symbolIndex, true);
             symbolIndex++;
             symbols.put(name, symbol);
@@ -26,14 +26,14 @@ public class GlobalScope {
     }
 
     public Symbol resolve(final String name) {
-        if (functionScope != null && functionScope.exists(name)) {
+        if (!onGlobalScope() && functionScope.exists(name)) {
             return functionScope.resolve(name);
         }
         return symbols.get(name);
     }
 
     public boolean existsOnCurrentScope(final String name) {
-        if (functionScope == null) {
+        if (onGlobalScope()) {
             return symbols.containsKey(name);
         } else {
             return functionScope.existsOnCurrentScope(name);
@@ -58,5 +58,9 @@ public class GlobalScope {
 
     public FunctionScope getFunctionScope() {
         return functionScope;
+    }
+
+    public boolean onGlobalScope() {
+        return functionScope == null;
     }
 }

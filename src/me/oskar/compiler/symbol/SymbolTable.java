@@ -21,6 +21,10 @@ public class SymbolTable {
         return globalScope.existsOnCurrentScope(name);
     }
 
+    public boolean onGlobalScope() {
+        return globalScope.onGlobalScope();
+    }
+
     public Symbol defineParameter(final String name, final int index) {
         return globalScope.defineParameter(name, index);
     }
