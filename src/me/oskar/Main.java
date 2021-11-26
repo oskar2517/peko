@@ -6,20 +6,17 @@ import me.oskar.parser.Parser;
 import me.oskar.vm.VirtualMachine;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        if (args.length == 0) {
+            System.out.println("Usage: peko <input>");
+        }
 
-        final var code =
-                """
-                                         
-                func main() {
-                    var a = "" + str(-2);
-                    
-                    println(a);
-                }
-                """;
+        final var code = new String(Files.readAllBytes(Paths.get(args[0])));
 
         final var lexer = new Lexer(code);
         final var parser = new Parser(lexer);
