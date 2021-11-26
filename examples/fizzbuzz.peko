@@ -1,18 +1,3 @@
-# peko
-Peko is a simple imperative programming lnauge utilizing a custom bytecode and VM.
-
-## Features
-- C-like Syntax
-- Short circuit evaluation
-- Functions
-- Local and global variables
-- Arrays
-
-## Usage
-`java -jar peko.jar <input>`
-
-## Example
-```
 func main() {
     var i = 1;
     while i <= 100 {
@@ -33,4 +18,3 @@ func main() {
         i = i + 1;
     }
 }
-```
