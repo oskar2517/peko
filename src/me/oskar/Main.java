@@ -25,8 +25,6 @@ public class Main {
         final var parser = new Parser(lexer);
         parser.generateAst();
 
-        System.out.println(parser.getAst());
-
         final var compiler = new Compiler(parser.getAst());
         final var bytecode = compiler.compile();
 

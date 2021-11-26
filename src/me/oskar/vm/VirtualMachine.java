@@ -231,7 +231,6 @@ public class VirtualMachine {
                 stack.push(right.neg());
             }
             case OpCode.HALT -> {
-                System.out.println(stack.getFp());
                 System.exit(0);
             }
             case OpCode.ARRAY -> {
