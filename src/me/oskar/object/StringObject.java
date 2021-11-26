@@ -19,7 +19,11 @@ public class StringObject extends LObject {
 
     @Override
     public LObject add(final LObject o) {
-        return new StringObject(value + o.toString());
+        if (o instanceof StringObject oc) {
+            return new StringObject(value + oc.value);
+        } else {
+            return super.add(o);
+        }
     }
 
     @Override

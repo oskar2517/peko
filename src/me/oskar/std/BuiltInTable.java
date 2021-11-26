@@ -14,6 +14,8 @@ public class BuiltInTable {
         functions.add(new PrintFunction());
         functions.add(new ReadNumberFunction());
         functions.add(new ReadLineFunction());
+        functions.add(new LengthFunction());
+        functions.add(new StringFunction());
     }
 
     public boolean isBuiltInFunction(final String name) {

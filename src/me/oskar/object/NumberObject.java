@@ -16,7 +16,11 @@ public class NumberObject extends LObject {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        if (value % 1 == 0) {
+            return String.valueOf((int) value);
+        } else {
+            return String.valueOf(value);
+        }
     }
 
     @Override

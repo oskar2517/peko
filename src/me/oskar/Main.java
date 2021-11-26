@@ -13,13 +13,10 @@ public class Main {
 
         final var code =
                 """
-                func sum(a) {
-                
-                }
                                          
                 func main() {
-                    var a = [];
-                    a[4] = 2;
+                    var a = "" + str(-2);
+                    
                     println(a);
                 }
                 """;
