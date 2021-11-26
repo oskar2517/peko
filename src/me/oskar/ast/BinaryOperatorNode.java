@@ -26,6 +26,6 @@ public class BinaryOperatorNode extends Node {
 
     @Override
     public String toString() {
-        return "(" + type + " " + left + " " + right + ")";
+        return String.format("(%s %s %s)", type, left, right);
     }
 }

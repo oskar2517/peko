@@ -16,6 +16,6 @@ public class ArrayNode extends Node {
 
     @Override
     public String toString() {
-        return "(ARRAY" + " " + value + ")";
+        return String.format("(ARRAY %s)", value);
     }
 }

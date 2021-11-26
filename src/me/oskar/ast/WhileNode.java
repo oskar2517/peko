@@ -20,6 +20,6 @@ public class WhileNode extends Node {
 
     @Override
     public String toString() {
-        return "(WHILE" + " " + condition + " " + body + ")";
+        return String.format("(WHILE %s %S)", condition, body);
     }
 }

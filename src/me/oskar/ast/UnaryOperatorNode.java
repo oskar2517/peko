@@ -21,6 +21,6 @@ public class UnaryOperatorNode extends Node {
 
     @Override
     public String toString() {
-        return "(" + type + " " + right + ")";
+        return String.format("(%s %s)", type, right);
     }
 }

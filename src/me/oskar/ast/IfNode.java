@@ -26,6 +26,6 @@ public class IfNode extends Node {
 
     @Override
     public String toString() {
-        return "(IF" + " " + condition + " " + consequence + " " + alternative + ")";
+        return String.format("(IF %s %s %s)", condition, consequence, alternative);
     }
 }

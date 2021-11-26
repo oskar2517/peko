@@ -22,6 +22,6 @@ public class CallNode extends Node {
 
     @Override
     public String toString() {
-        return "(Call" + " " + functionName + " " + arguments + ")";
+        return String.format("(CALL %S %S)", functionName, arguments);
     }
 }

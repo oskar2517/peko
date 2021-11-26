@@ -14,6 +14,6 @@ public class NumberNode extends Node {
 
     @Override
     public String toString() {
-        return "(NUMBER" + " " + value + ")";
+        return String.format("(NUMBER %s)", value);
     }
 }

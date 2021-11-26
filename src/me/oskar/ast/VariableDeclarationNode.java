@@ -20,6 +20,6 @@ public class VariableDeclarationNode extends Node {
 
     @Override
     public String toString() {
-        return "(VAR_DECL " + name + " " + value + ")";
+        return String.format("(VAR_DECL %s %S)", name, value);
     }
 }

@@ -20,6 +20,6 @@ public class VariableAssignNode extends Node {
 
     @Override
     public String toString() {
-        return "(VAR_ASGN " + name + " " + value + ")";
+        return String.format("(VAR_ASGN %s %s)", name, value);
     }
 }

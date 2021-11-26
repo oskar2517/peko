@@ -28,6 +28,6 @@ public class FunctionNode extends Node {
 
     @Override
     public String toString() {
-        return "(FUNC" + " " + name + " " + parameters + " " + body + ")";
+        return String.format("(FUNC %s %s %s)", name, parameters, body);
     }
 }

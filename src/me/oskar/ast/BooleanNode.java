@@ -14,6 +14,6 @@ public class BooleanNode extends Node {
 
     @Override
     public String toString() {
-        return "(BOOLEAN " + value + ")";
+        return String.format("BOOL %s", value);
     }
 }

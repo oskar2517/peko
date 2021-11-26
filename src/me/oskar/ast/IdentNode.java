@@ -14,6 +14,6 @@ public class IdentNode extends Node {
 
     @Override
     public String toString() {
-        return "(IDENT" + " " + value + ")";
+        return String.format("(IDENT %s)", value);
     }
 }
