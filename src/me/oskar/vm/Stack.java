@@ -45,7 +45,7 @@ public class Stack<E> {
         return stack[index];
     }
 
-    public void pop(final int amount) {
+    public void drop(final int amount) {
         for (int i = 0; i < amount; i++) {
             pop();
         }

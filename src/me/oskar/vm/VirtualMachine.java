@@ -4,6 +4,8 @@ import me.oskar.code.OpCode;
 import me.oskar.compiler.constant.ConstantPool;
 import me.oskar.error.Error;
 import me.oskar.object.LObject;
+import me.oskar.object.NilObject;
+import me.oskar.std.BuiltInTable;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -104,6 +106,17 @@ public class VirtualMachine {
                 callStack.push(instructions.position());
                 instructions.position(position);
             }
+            case OpCode.CALL_B -> {
+                final var index = instructions.getInt();
+                final var function = BuiltInTable.getInstance().getBuiltInFunction(index);
+
+                final var arguments = new ArrayList<LObject>();
+                for (var i = 0; i < function.getParametersCount(); i++) {
+                    arguments.add(stack.pop());
+                }
+
+                stack.push(function.invoke(arguments));
+            }
             case OpCode.RET -> {
                 final var position = callStack.pop();
 
@@ -125,7 +138,7 @@ public class VirtualMachine {
             case OpCode.POP -> {
                 final var amount = instructions.getInt();
 
-                stack.pop(amount);
+                stack.drop(amount);
             }
             case OpCode.ADD -> {
                 final var right = stack.pop();

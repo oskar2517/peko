@@ -12,19 +12,11 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         final var code =
-                """
-                func trueFunc() {
-                    puts "true called";
-                    return true;
-                }
-                
-                func falseFunc() {
-                    puts "false called";
-                    return false;
-                }
-                
+                """                          
                 func main() {
-                    puts falseFunc() || falseFunc() || falseFunc();
+                    print("Please enter your name: ");
+                    var name = readLine();
+                    println("Your name: " + name);
                 }
                 """;
 
@@ -34,8 +26,8 @@ public class Main {
 
         System.out.println(parser.getAst());
 
-        final var compiler = new Compiler();
-        final var bytecode = compiler.compile(parser.getAst());
+        final var compiler = new Compiler(parser.getAst());
+        final var bytecode = compiler.compile();
 
         final var vm = new VirtualMachine(bytecode);
         vm.execute();
