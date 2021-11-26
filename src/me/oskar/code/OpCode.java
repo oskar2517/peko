@@ -35,5 +35,4 @@ public class OpCode {
     public static final int NEG = 0x1E;
     public static final int HALT = 0x1F;
     public static final int ARRAY = 0x20;
-    public static final int PUTS = 0x21;
 }

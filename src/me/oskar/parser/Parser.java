@@ -169,19 +169,6 @@ public class Parser {
     }
 
     /**
-     * Parses a puts node.
-     * @return The node.
-     */
-    protected PutsNode parsePuts() {
-        nextToken();
-        final var value = expressionParser.parseExpression();
-        expectToken(TokenType.SEMICOLON);
-        nextToken();
-
-        return new PutsNode(value);
-    }
-
-    /**
      * Parses a function node.
      * @return The node.
      */
@@ -298,7 +285,6 @@ public class Parser {
             case VAR -> block.addNode(parseVariableDeclaration());
             case IF -> block.addNode(parseIf());
             case WHILE -> block.addNode(parseWhile());
-            case PUTS -> block.addNode(parsePuts());
             case RETURN -> block.addNode(parseReturn());
             case ILLEGAL -> {
                 System.out.println("Unexpected token `" + currentToken.getLiteral() + "´");

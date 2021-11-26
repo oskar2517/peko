@@ -101,10 +101,6 @@ public class Compiler {
         emit(OpCode.CONST, index, out);
     }
 
-    private void compile(final PutsNode node, final DataOutputStream out) {
-        compile(node.getValue(), out);
-        emit(OpCode.PUTS, out);
-    }
 
     private void compile(final BinaryOperatorNode node, final DataOutputStream out) {
         switch (node.getType()) {
@@ -314,7 +310,7 @@ public class Compiler {
 
         emit(OpCode.CONST, constantPool.addNilConstant(), out);
         emit(OpCode.STORE_R, out);
-        emit(OpCode.RET, out);;
+        emit(OpCode.RET, out);
 
         symbolTable.leaveFunctionScope();
     }
@@ -394,8 +390,6 @@ public class Compiler {
         } else if (node instanceof StringNode n) {
             compile(n, out);
         } else if (node instanceof NilNode n) {
-            compile(n, out);
-        } else if (node instanceof PutsNode n) {
             compile(n, out);
         } else if (node instanceof BinaryOperatorNode n) {
             compile(n, out);

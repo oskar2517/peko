@@ -243,10 +243,6 @@ public class VirtualMachine {
 
                 stack.push(new ArrayObject(value));
             }
-            case OpCode.PUTS -> {
-                final var value = stack.pop();
-                System.out.println(value);
-            }
         }
     }
 }
