@@ -12,11 +12,15 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         final var code =
-                """                          
+                """
+                func sum(a) {
+                
+                }
+                                         
                 func main() {
-                    print("Please enter your name: ");
-                    var name = readLine();
-                    println("Your name: " + name);
+                    var a = [];
+                    a[4] = 2;
+                    println(a);
                 }
                 """;
 

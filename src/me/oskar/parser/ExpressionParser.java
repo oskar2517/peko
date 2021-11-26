@@ -7,7 +7,7 @@ import me.oskar.lexer.TokenType;
 
 /**
  * Parses expressions into a subtree.
- *
+ * <p>
  * Examples:
  * 2 * (3 + 5)
  * 5 + x
@@ -79,13 +79,26 @@ public class ExpressionParser {
         while (true) {
             OperatorType type;
             switch (parser.getCurrentToken().getType()) {
-                case LESS_THAN: type = OperatorType.LT; break;
-                case LESS_THAN_OR_EQUAL: type = OperatorType.LE; break;
-                case GREATER_THAN: type = OperatorType.GT; break;
-                case GREATER_THAN_OR_EQUAL: type = OperatorType.GE; break;
-                case EQUALS: type = OperatorType.EQ; break;
-                case NOT_EQUALS: type = OperatorType.NE; break;
-                default: return left;
+                case LESS_THAN:
+                    type = OperatorType.LT;
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    type = OperatorType.LE;
+                    break;
+                case GREATER_THAN:
+                    type = OperatorType.GT;
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    type = OperatorType.GE;
+                    break;
+                case EQUALS:
+                    type = OperatorType.EQ;
+                    break;
+                case NOT_EQUALS:
+                    type = OperatorType.NE;
+                    break;
+                default:
+                    return left;
             }
 
             parser.nextToken();
@@ -107,9 +120,14 @@ public class ExpressionParser {
         while (true) {
             OperatorType type;
             switch (parser.getCurrentToken().getType()) {
-                case PLUS: type = OperatorType.ADD; break;
-                case MINUS: type = OperatorType.SUB; break;
-                default: return left;
+                case PLUS:
+                    type = OperatorType.ADD;
+                    break;
+                case MINUS:
+                    type = OperatorType.SUB;
+                    break;
+                default:
+                    return left;
             }
 
             parser.nextToken();
@@ -132,10 +150,17 @@ public class ExpressionParser {
         while (true) {
             OperatorType type;
             switch (parser.getCurrentToken().getType()) {
-                case ASTERISK: type = OperatorType.MUL; break;
-                case SLASH: type = OperatorType.DIV; break;
-                case PERCENT: type = OperatorType.MOD; break;
-                default: return left;
+                case ASTERISK:
+                    type = OperatorType.MUL;
+                    break;
+                case SLASH:
+                    type = OperatorType.DIV;
+                    break;
+                case PERCENT:
+                    type = OperatorType.MOD;
+                    break;
+                default:
+                    return left;
             }
 
             parser.nextToken();
@@ -148,6 +173,7 @@ public class ExpressionParser {
      * Parses unary expressions of the following types:
      * - -right
      * - !right
+     *
      * @return The parsed node.
      */
     private Node parseSignedFactor() {
@@ -155,25 +181,47 @@ public class ExpressionParser {
             case MINUS -> {
                 parser.nextToken();
 
-                final var right = parseFactor();
+                final var right = parseAccess();
                 return new UnaryOperatorNode(OperatorType.NEG, right);
             }
             case BANG -> {
                 parser.nextToken();
 
-                final var right = parseFactor();
+                final var right = parseAccess();
                 return new UnaryOperatorNode(OperatorType.NOT, right);
             }
             default -> {
-                return parseFactor();
+                return parseAccess();
             }
         }
     }
 
     /**
+     * Parses access expressions:
+     * - left[right]
+     *
+     * @return The parsed node.
+     */
+    private Node parseAccess() {
+        var left = parseFactor();
+
+        while (parser.getCurrentToken().getType() == TokenType.LBRACK) {
+            parser.nextToken();
+
+            final var index = parseExpression();
+            parser.expectToken(TokenType.RBRACK);
+            parser.nextToken();
+
+            left = new ArrayAccessNode(left, index);
+        }
+
+        return left;
+    }
+
+    /**
      * Parses a factor into a Node.
      * A factor is the smallest possible expression with an inherent value.
-     *
+     * <p>
      * Examples:
      * 2
      * "string"
@@ -228,6 +276,9 @@ public class ExpressionParser {
                 parser.nextToken();
 
                 return new NilNode();
+            }
+            case LBRACK -> {
+                return parser.parseArray();
             }
             default -> {
                 Error.error("Unexpected token `%s`.", parser.getCurrentToken().getLiteral());

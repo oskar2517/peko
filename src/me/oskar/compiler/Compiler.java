@@ -12,6 +12,7 @@ import me.oskar.std.BuiltInTable;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Compiler {
 
@@ -225,6 +226,33 @@ public class Compiler {
         }
     }
 
+    private void compile(final ArrayNode node, final DataOutputStream out) {
+        for (final var v : node.getValue()) {
+            compile(v, out);
+        }
+
+        emit(OpCode.ARRAY, node.getValue().size(), out);
+    }
+
+    private void compile(final ArrayAccessNode node, final DataOutputStream out) {
+        compile(node.getTarget(), out);
+        compile(node.getIndex(), out);
+
+        emit(OpCode.LOAD_A, out);
+    }
+
+    private void compile(final ArrayAssignNode node, final DataOutputStream out) {
+        final var indexBytes = new ByteArrayOutputStream();
+        final var indexOut = new DataOutputStream(indexBytes);
+        compile(node.getIndex(), indexOut);
+        final var targetBytesArray = indexBytes.toByteArray();
+        writeToOut(out, Arrays.copyOfRange(targetBytesArray, 0, targetBytesArray.length - 1));
+
+        compile(node.getValue(), out);
+
+        emit(OpCode.STORE_A, out);
+    }
+
     private void compile(final VariableAssignNode node, final DataOutputStream out) {
         final var symbol = symbolTable.resolve(node.getName());
         if (symbol == null) {
@@ -392,6 +420,12 @@ public class Compiler {
         } else if (node instanceof ReturnNode n) {
             compile(n, out);
         } else if (node instanceof ExpressionStatementNode n) {
+            compile(n, out);
+        } else if (node instanceof ArrayNode n) {
+            compile(n, out);
+        } else if (node instanceof ArrayAccessNode n) {
+            compile(n, out);
+        } else if (node instanceof ArrayAssignNode n) {
             compile(n, out);
         } else {
             throw new IllegalStateException("Unhandled node " + node);

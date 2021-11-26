@@ -1,6 +1,7 @@
 package me.oskar.ast;
 
 public class VariableAssignNode extends Node {
+
     private final String name;
     private final Node value;
 

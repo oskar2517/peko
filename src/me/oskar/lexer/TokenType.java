@@ -12,6 +12,8 @@ public enum TokenType {
     RPAREN,
     LBRACE,
     RBRACE,
+    LBRACK,
+    RBRACK,
 
     PLUS,
     MINUS,

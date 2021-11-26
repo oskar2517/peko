@@ -59,6 +59,31 @@ public class Parser {
     }
 
     /**
+     * Parses an array node.
+     * @return The node.
+     */
+    protected ArrayNode parseArray() {
+        nextToken();
+
+        final var value = new ArrayList<Node>();
+
+        while (currentToken.getType() != TokenType.RBRACK) {
+            value.add(expressionParser.parseExpression());
+            if (currentToken.getType() == TokenType.COMMA && lexer.peekToken().getType() == TokenType.RBRACK) {
+                expectToken(TokenType.RBRACK);
+            } else if (currentToken.getType() == TokenType.COMMA) {
+                nextToken();
+            } else {
+                expectToken(TokenType.RBRACK);
+            }
+        }
+
+        nextToken();
+
+        return new ArrayNode(value);
+    }
+
+    /**
      * Parses a variable declaration node.
      * @return The node.
      */
@@ -253,9 +278,21 @@ public class Parser {
                 if (lexer.peekToken().getType() == TokenType.ASSIGN) {
                     block.addNode(parseVariableAssign());
                 } else {
-                    final var expression = new ExpressionStatementNode(expressionParser.parseExpression());
-                    nextToken();
-                    block.addNode(expression);
+                    final var expression = expressionParser.parseExpression();
+
+                    if (currentToken.getType() == TokenType.ASSIGN) {
+                        nextToken();
+                        final var value = expressionParser.parseExpression();
+                        expectToken(TokenType.SEMICOLON);
+                        nextToken();
+
+                        block.addNode(new ArrayAssignNode(expression, value));
+                    } else {
+                        expectToken(TokenType.SEMICOLON);
+                        nextToken();
+
+                        block.addNode(new ExpressionStatementNode(expression));
+                    }
                 }
             }
             case VAR -> block.addNode(parseVariableDeclaration());

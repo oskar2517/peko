@@ -59,6 +59,15 @@ public class LObject {
         return null;
     }
 
+    public LObject getIndex(final LObject index) {
+        Error.error("Array access operator not supported on %s", this);
+        return null;
+    }
+
+    public void setIndex(final LObject index, final LObject newValue) {
+        Error.error("Array access operator not supported on %s", this);
+    }
+
     public LObject not() {
         Error.error("Cannot perform operation `!` on %s.", this);
         return null;

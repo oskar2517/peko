@@ -3,6 +3,7 @@ package me.oskar.vm;
 import me.oskar.code.OpCode;
 import me.oskar.compiler.constant.ConstantPool;
 import me.oskar.error.Error;
+import me.oskar.object.ArrayObject;
 import me.oskar.object.LObject;
 import me.oskar.object.NilObject;
 import me.oskar.std.BuiltInTable;
@@ -78,6 +79,19 @@ public class VirtualMachine {
 
                 final var value = stack.pop();
                 stack.set(stack.getFp() + index, value);
+            }
+            case OpCode.LOAD_A -> {
+                final var index = stack.pop();
+                final var target = stack.pop();
+
+                stack.push(target.getIndex(index));
+            }
+            case OpCode.STORE_A -> {
+                final var value = stack.pop();
+                final var index = stack.pop();
+                final var target = stack.pop();
+
+                target.setIndex(index, value);
             }
             case OpCode.JMP -> {
                 final var offset = instructions.getInt();
@@ -219,6 +233,16 @@ public class VirtualMachine {
             case OpCode.HALT -> {
                 System.out.println(stack.getFp());
                 System.exit(0);
+            }
+            case OpCode.ARRAY -> {
+                final var size = instructions.getInt();
+
+                final var value = new ArrayList<LObject>();
+                for (int i = 0; i < size; i++) {
+                    value.add(0, stack.pop());
+                }
+
+                stack.push(new ArrayObject(value));
             }
             case OpCode.PUTS -> {
                 final var value = stack.pop();

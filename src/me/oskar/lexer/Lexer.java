@@ -157,6 +157,8 @@ public class Lexer {
             case '*': return new Token(TokenType.ASTERISK, "*");
             case '/': return new Token(TokenType.SLASH, "/");
             case '%': return new Token(TokenType.PERCENT, "%");
+            case '[': return new Token(TokenType.LBRACK, "[");
+            case ']': return new Token(TokenType.RBRACK, "]");
             case '&': {
                 if (peekChar() == '&') {
                     readChar();
