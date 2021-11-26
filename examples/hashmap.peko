@@ -1,0 +1,28 @@
+var hashmap = [];
+
+func fill() {
+    hashmap[50] = nil;
+}
+
+func hash(s) {
+    return len(s) % len(hashmap);
+}
+
+func add(key, value) {
+    var index = hash(key);
+    hashmap[index] = value;
+}
+
+func get(key) {
+    var index = hash(key);
+    return hashmap[index];
+}
+
+func main() {
+    fill();
+    add("name", "peko");
+    add("version", 1.0);
+
+    println(get("name"));
+    println(get("version"));
+}

@@ -1,0 +1,23 @@
+func trueFunc() {
+    println("trueFunc called");
+
+    return true;
+}
+
+func falseFunc() {
+    println("falseFunc called");
+
+    return false;
+}
+
+func main() {
+    println(falseFunc() && trueFunc());
+    println("");
+    println(trueFunc() && trueFunc());
+
+    println("");
+
+    println(falseFunc() || trueFunc());
+    println("");
+    println(trueFunc() || falseFunc());
+}

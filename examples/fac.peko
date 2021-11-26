@@ -1,0 +1,13 @@
+func fac(n) {
+    if n == 0 {
+        return 1;
+    } 
+
+    return n * fac(n - 1);
+}
+
+func main() {
+    var result = fac(5);
+
+    println("Result: " + str(result));
+}

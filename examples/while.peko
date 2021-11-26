@@ -1,0 +1,11 @@
+var arr = [2.3, true, "a string", [8, 3.422], 5];
+
+func main() {
+    var i = 0;
+
+    while i < len(arr) {
+        println(arr[i]);
+
+        i = i + 1;
+    }
+}

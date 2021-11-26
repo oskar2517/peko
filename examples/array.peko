@@ -1,0 +1,20 @@
+var globalArr = [1, 2, 3, 4];
+
+func returnArray() {
+    return globalArr;
+}
+
+func main() {
+    var arr = [2.3, true, "a string", [8, 3.422], 5];
+
+    println(arr);
+
+    println(arr[2]);
+
+    arr[3][0] = "another string";
+
+    println(arr);
+
+    returnArray()[0] = 5;
+    println(globalArr);
+}

@@ -1,0 +1,7 @@
+var global1 = "A simple string";
+var global2 = 2 * 3 + 4;
+
+func main() {
+    println("global1: " + global1);
+    println("global2: " + str(global2));
+}
