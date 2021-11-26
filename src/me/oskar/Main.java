@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.out.println("Usage: peko <input>");
+            System.exit(1);
         }
 
         final var code = new String(Files.readAllBytes(Paths.get(args[0])));

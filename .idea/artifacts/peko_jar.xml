@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="peko:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/peko_jar</output-path>
+    <root id="archive" name="peko.jar">
+      <element id="module-output" name="peko" />
+    </root>
+  </artifact>
+</component>
