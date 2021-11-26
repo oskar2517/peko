@@ -286,10 +286,7 @@ public class Parser {
             case IF -> block.addNode(parseIf());
             case WHILE -> block.addNode(parseWhile());
             case RETURN -> block.addNode(parseReturn());
-            case ILLEGAL -> {
-                System.out.println("Unexpected token `" + currentToken.getLiteral() + "´");
-                System.exit(1);
-            }
+            case ILLEGAL -> Error.error("Illegal token `%s`.", currentToken.getLiteral());
             default -> {
                 final var expression = new ExpressionStatementNode(expressionParser.parseExpression());
                 nextToken();
