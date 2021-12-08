@@ -10,6 +10,10 @@ public class BuiltInTable {
     private final ArrayList<Function> functions = new ArrayList<>();
 
     private BuiltInTable() {
+        init();
+    }
+
+    private void init() {
         functions.add(new PrintlnFunction());
         functions.add(new PrintFunction());
         functions.add(new ReadNumberFunction());

@@ -128,22 +128,60 @@ public class Compiler {
                 emit(OpCode.JMP, 5, out);
                 emit(OpCode.CONST, constantPool.addConstant(true), out);
             }
-            default -> {
+            case ADD -> {
                 compile(node.getLeft(), out);
                 compile(node.getRight(), out);
-                switch (node.getType()) {
-                    case ADD -> emit(OpCode.ADD, out);
-                    case SUB -> emit(OpCode.SUB, out);
-                    case MUL -> emit(OpCode.MUL, out);
-                    case DIV -> emit(OpCode.DIV, out);
-                    case MOD -> emit(OpCode.MOD, out);
-                    case EQ -> emit(OpCode.EQ, out);
-                    case NE -> emit(OpCode.NE, out);
-                    case LT -> emit(OpCode.LT, out);
-                    case LE -> emit(OpCode.LE, out);
-                    case GT -> emit(OpCode.GT, out);
-                    case GE -> emit(OpCode.GE, out);
-                }
+                emit(OpCode.ADD, out);
+            }
+            case SUB -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.SUB, out);
+            }
+            case MUL -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.MUL, out);
+            }
+            case DIV -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.DIV, out);
+            }
+            case MOD -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.MOD, out);
+            }
+            case EQ -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.EQ, out);
+            }
+            case NE -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.NE, out);
+            }
+            case LT -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.LT, out);
+            }
+            case LE -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.LE, out);
+            }
+            case GT -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.GT, out);
+            }
+            case GE -> {
+                compile(node.getLeft(), out);
+                compile(node.getRight(), out);
+                emit(OpCode.GE, out);
             }
         }
     }
