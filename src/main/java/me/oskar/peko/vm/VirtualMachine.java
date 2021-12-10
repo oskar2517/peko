@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class VirtualMachine {
 
     private final byte[] bytecode;
-    private ArrayList<LObject> constantPool;
+    private LObject[] constantPool;
     private ByteBuffer instructions;
     private final Stack<LObject> stack = new Stack<>();
     private final Stack<Integer> callStack = new Stack<>();
@@ -56,7 +56,7 @@ public class VirtualMachine {
         switch (opCode) {
             case OpCode.CONST -> {
                 final var index = instructions.getInt();
-                stack.push(constantPool.get(index));
+                stack.push(constantPool[index]);
             }
             case OpCode.LOAD_G -> {
                 final var index = instructions.getInt();

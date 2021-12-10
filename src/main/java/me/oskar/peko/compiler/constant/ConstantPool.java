@@ -66,28 +66,28 @@ public class ConstantPool {
         return buffer.toByteArray();
     }
 
-    public static ArrayList<LObject> fromDataInputStream(final DataInputStream in) throws IOException {
-        final var pool = new ArrayList<LObject>();
-
+    public static LObject[] fromDataInputStream(final DataInputStream in) throws IOException {
         final var poolSize = in.readInt();
+        final var pool = new LObject[poolSize];
+
         for (int i = 0; i < poolSize; i++) {
             final var constantType = in.readByte();
 
             switch (constantType) {
                 case ConstantType.NUMBER -> {
                     final var value = in.readDouble();
-                    pool.add(new NumberObject(value));
+                    pool[i] = new NumberObject(value);
                 }
                 case ConstantType.BOOLEAN -> {
                     final var value = in.readByte() == 1;
-                    pool.add(new BooleanObject(value));
+                    pool[i] = new BooleanObject(value);
                 }
                 case ConstantType.STRING -> {
                     final var length = in.readInt();
                     final var value = new String(in.readNBytes(length), StandardCharsets.UTF_16);
-                    pool.add(new StringObject(value));
+                    pool[i] = new StringObject(value);
                 }
-                case ConstantType.NIL -> pool.add(new NilObject());
+                case ConstantType.NIL -> pool[i] = new NilObject();
                 default -> throw new IllegalStateException("Unexpected object type: " + constantType);
             }
         }
