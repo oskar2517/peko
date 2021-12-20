@@ -53,7 +53,7 @@ public class ConstantPool {
                 out.writeByte(ConstantType.BOOLEAN);
                 out.writeByte(cc.getValue() ? 1 : 0);
             } else if (c instanceof StringConstant cc) {
-                final var stringBytes = cc.getValue().getBytes(StandardCharsets.UTF_16);
+                final var stringBytes = cc.getValue().getBytes(StandardCharsets.UTF_8);
 
                 out.writeByte(ConstantType.STRING);
                 out.writeInt(stringBytes.length);
@@ -84,7 +84,7 @@ public class ConstantPool {
                 }
                 case ConstantType.STRING -> {
                     final var length = in.readInt();
-                    final var value = new String(in.readNBytes(length), StandardCharsets.UTF_16);
+                    final var value = new String(in.readNBytes(length), StandardCharsets.UTF_8);
                     pool[i] = new StringObject(value);
                 }
                 case ConstantType.NIL -> pool[i] = new NilObject();
