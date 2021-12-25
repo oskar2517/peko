@@ -3,7 +3,7 @@ package me.oskar.peko.compiler;
 import me.oskar.peko.ast.*;
 import me.oskar.peko.code.Code;
 import me.oskar.peko.code.OpCode;
-import me.oskar.peko.compiler.analysis.SemanticAnalyzer;
+import me.oskar.peko.compiler.analysis.SemanticAnalyser;
 import me.oskar.peko.compiler.constant.ConstantPool;
 import me.oskar.peko.compiler.symbol.BuiltInFunctionEntry;
 import me.oskar.peko.compiler.symbol.SymbolTable;
@@ -37,8 +37,8 @@ public class Compiler {
     }
 
     private void performSemanticAnalysis() {
-        final var semanticAnalyzer = new SemanticAnalyzer(symbolTable);
-        semanticAnalyzer.visit(ast);
+        final var semanticAnalyser = new SemanticAnalyser(symbolTable);
+        semanticAnalyser.visit(ast);
     }
 
     public byte[] compile() throws IOException {

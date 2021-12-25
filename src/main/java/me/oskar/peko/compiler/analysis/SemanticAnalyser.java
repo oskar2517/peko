@@ -10,11 +10,11 @@ import me.oskar.peko.ast.visitor.BaseVisitor;
 
 import java.util.Collections;
 
-public class SemanticAnalyzer extends BaseVisitor {
+public class SemanticAnalyser extends BaseVisitor {
 
     private final SymbolTable currentSymbolTable;
 
-    public SemanticAnalyzer(final SymbolTable currentSymbolTable) {
+    public SemanticAnalyser(final SymbolTable currentSymbolTable) {
         this.currentSymbolTable = currentSymbolTable;
     }
 
@@ -72,10 +72,10 @@ public class SemanticAnalyzer extends BaseVisitor {
     @Override
     public void visit(final BlockNode blockNode) {
         final var blockSymbolTable = new SymbolTable(currentSymbolTable, currentSymbolTable.getSymbolCount());
-        final var blockSemanticAnalyzer = new SemanticAnalyzer(blockSymbolTable);
+        final var blockSemanticAnalyser = new SemanticAnalyser(blockSymbolTable);
 
         for (final var s : blockNode.getBody()) {
-            s.accept(blockSemanticAnalyzer);
+            s.accept(blockSemanticAnalyser);
         }
 
         currentSymbolTable.increaseSymbolIndex(blockSymbolTable.getSymbolCount());
@@ -165,16 +165,16 @@ public class SemanticAnalyzer extends BaseVisitor {
             Error.error("Symbol `%s` already defined on this scope.", functionNode.getName());
         }
         final var localSymbolTable = new SymbolTable(currentSymbolTable);
-        final var localSemanticAnalyzer = new SemanticAnalyzer(localSymbolTable);
+        final var localSemanticAnalyser = new SemanticAnalyser(localSymbolTable);
 
         Collections.reverse(functionNode.getParameters());
         for (final var p : functionNode.getParameters()) {
-            p.accept(localSemanticAnalyzer);
+            p.accept(localSemanticAnalyser);
         }
         final var functionEntry = new UserFunctionEntry(functionNode.getParameters().size(), localSymbolTable);
         currentSymbolTable.enter(functionNode.getName(), functionEntry);
 
-        functionNode.getBody().accept(localSemanticAnalyzer);
+        functionNode.getBody().accept(localSemanticAnalyser);
     }
 
     @Override
