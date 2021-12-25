@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 import java.util.ArrayList;
 
 public class ArrayNode extends Node {
@@ -17,5 +19,10 @@ public class ArrayNode extends Node {
     @Override
     public String toString() {
         return String.format("(ARRAY %s)", value);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }

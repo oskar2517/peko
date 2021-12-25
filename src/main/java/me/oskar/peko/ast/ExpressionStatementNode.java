@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 public class ExpressionStatementNode extends Node {
 
     private final Node value;
@@ -15,5 +17,10 @@ public class ExpressionStatementNode extends Node {
     @Override
     public String toString() {
         return String.format("(EXPR_STMT %s)", value);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }

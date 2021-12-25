@@ -2,27 +2,21 @@ package me.oskar.peko.ast;
 
 import me.oskar.peko.ast.visitor.Visitor;
 
-public class VariableAssignNode extends Node {
+public class ParameterDeclarationNode extends Node {
 
     private final String name;
-    private final Node value;
 
-    public VariableAssignNode(final String name, final Node value) {
+    public ParameterDeclarationNode(final String name) {
         this.name = name;
-        this.value = value;
     }
 
     public String getName() {
         return name;
     }
 
-    public Node getValue() {
-        return value;
-    }
-
     @Override
     public String toString() {
-        return String.format("(VAR_ASGN %s %s)", name, value);
+        return String.format("(PARAM_DECL %s)", name);
     }
 
     @Override

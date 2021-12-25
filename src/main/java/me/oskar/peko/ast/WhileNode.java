@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 public class WhileNode extends Node {
 
     private final Node condition;
@@ -21,5 +23,10 @@ public class WhileNode extends Node {
     @Override
     public String toString() {
         return String.format("(WHILE %s %S)", condition, body);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }

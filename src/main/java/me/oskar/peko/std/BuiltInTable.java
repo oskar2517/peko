@@ -40,6 +40,10 @@ public class BuiltInTable {
         return functions.get(index);
     }
 
+    public ArrayList<Function> getFunctions() {
+        return functions;
+    }
+
     public static BuiltInTable getInstance() {
         return instance;
     }

@@ -3,10 +3,11 @@ package me.oskar.peko.compiler;
 import me.oskar.peko.ast.*;
 import me.oskar.peko.code.Code;
 import me.oskar.peko.code.OpCode;
+import me.oskar.peko.compiler.analysis.SemanticAnalyzer;
 import me.oskar.peko.compiler.constant.ConstantPool;
-import me.oskar.peko.compiler.function.CompileTimeFunction;
+import me.oskar.peko.compiler.symbol.BuiltInFunctionEntry;
 import me.oskar.peko.compiler.symbol.SymbolTable;
-import me.oskar.peko.error.Error;
+import me.oskar.peko.compiler.symbol.UserFunctionEntry;
 import me.oskar.peko.std.BuiltInTable;
 
 import java.io.ByteArrayOutputStream;
@@ -18,12 +19,26 @@ public class Compiler {
 
     private final FileNode ast;
     private final ConstantPool constantPool = new ConstantPool();
-    private final SymbolTable symbolTable = new SymbolTable();
+    private SymbolTable symbolTable = new SymbolTable();
     private int globalsCount = 0;
     private int functionsPosition = 0;
 
     public Compiler(final FileNode ast) {
         this.ast = ast;
+
+        initBuiltInFunctions();
+        performSemanticAnalysis();
+    }
+
+    private void initBuiltInFunctions() {
+        for (final var function : BuiltInTable.getInstance().getFunctions()) {
+            symbolTable.enterBuiltIn(function.getName(), new BuiltInFunctionEntry(function.getParametersCount()));
+        }
+    }
+
+    private void performSemanticAnalysis() {
+        final var semanticAnalyzer = new SemanticAnalyzer(symbolTable);
+        semanticAnalyzer.visit(ast);
     }
 
     public byte[] compile() throws IOException {
@@ -49,26 +64,19 @@ public class Compiler {
     }
 
     private void compile(final BlockNode node, final DataOutputStream out) {
-        symbolTable.enterBlockScope();
+        final var prevSymbolTable = symbolTable;
+        symbolTable = node.getSymbolTable();
 
         for (Node n : node.getBody()) {
             compile(n, out);
         }
 
-        symbolTable.leaveBlockScope();
+        symbolTable = prevSymbolTable;
     }
 
     private void compile(final FileNode node, final DataOutputStream out) {
-        for (VariableDeclarationNode v : node.getVariables()) {
-            symbolTable.define(v.getName());
-        }
-
         for (FunctionNode f : node.getFunctions()) {
             compile(f, out);
-        }
-
-        if (node.getMainFunction() == null) {
-            Error.error("Main function missing.");
         }
 
         compile(node.getMainFunction(), out);
@@ -78,9 +86,8 @@ public class Compiler {
             compile(v, out);
         }
 
-        final var mainSymbol = symbolTable.resolve("main");
-        final var mainFunction = symbolTable.getFunction(mainSymbol);
-        emit(OpCode.ASF, mainFunction.getScope().getLocalsCount(), out);
+        final var mainFunction = (UserFunctionEntry) symbolTable.lookup("main").getSymbolEntry();
+        emit(OpCode.ASF, mainFunction.getSymbolTable().getSymbolCount(), out);
         emit(OpCode.CALL, mainFunction.getPosition(), out);
         emit(OpCode.RSF, out);
         emit(OpCode.HALT, out);
@@ -100,7 +107,6 @@ public class Compiler {
         final var index = constantPool.addConstant(node.getValue());
         emit(OpCode.CONST, index, out);
     }
-
 
     private void compile(final BinaryOperatorNode node, final DataOutputStream out) {
         switch (node.getType()) {
@@ -236,27 +242,13 @@ public class Compiler {
     }
 
     private void compile(final VariableDeclarationNode node, final DataOutputStream out) {
-        if (BuiltInTable.getInstance().isBuiltInFunction(node.getName())) {
-            Error.error(String.format("Symbol `%s` is already defined on this scope.", node.getName()));
-        }
+        compile(node.getValue(), out);
 
-        final var symbol = symbolTable.resolve(node.getName());
-
-        if (symbol != null && symbol.isGlobal() && !symbol.isInitialized() && symbolTable.onGlobalScope()) {
-            symbol.initialize();
-            compile(node.getValue(), out);
+        final var symbol = symbolTable.lookup(node.getName());
+        if (symbol.isGlobal()) {
             emit(OpCode.STORE_G, symbol.getIndex(), out);
-        } else if (symbolTable.existsOnCurrentScope(node.getName())) {
-            Error.error(String.format("Symbol `%s` is already defined on this scope.", node.getName()));
         } else {
-            final var newSymbol = symbolTable.define(node.getName());
-            newSymbol.initialize();
-            compile(node.getValue(), out);
-            if (newSymbol.isGlobal()) {
-                emit(OpCode.STORE_G, newSymbol.getIndex(), out);
-            } else {
-                emit(OpCode.STORE_L, newSymbol.getIndex(), out);
-            }
+            emit(OpCode.STORE_L, symbol.getIndex(), out);
         }
     }
 
@@ -278,7 +270,7 @@ public class Compiler {
     private void compile(final ArrayAssignNode node, final DataOutputStream out) {
         final var indexBytes = new ByteArrayOutputStream();
         final var indexOut = new DataOutputStream(indexBytes);
-        compile(node.getIndex(), indexOut);
+        compile(node.getTarget(), indexOut);
         final var targetBytesArray = indexBytes.toByteArray();
         writeToOut(out, Arrays.copyOfRange(targetBytesArray, 0, targetBytesArray.length - 1));
 
@@ -288,14 +280,8 @@ public class Compiler {
     }
 
     private void compile(final VariableAssignNode node, final DataOutputStream out) {
-        final var symbol = symbolTable.resolve(node.getName());
-        if (symbol == null) {
-            Error.error("Symbol `%s` undefined.", node.getValue());
-            return;
-        }
-        if (symbolTable.existsFunction(symbol)) {
-            Error.error("Illegal use of function `%s`.", node.getName());
-        }
+        final var symbol = symbolTable.lookup(node.getName());
+
         compile(node.getValue(), out);
         if (symbol.isGlobal()) {
             emit(OpCode.STORE_G, symbol.getIndex(), out);
@@ -305,18 +291,8 @@ public class Compiler {
     }
 
     private void compile(final IdentNode node, final DataOutputStream out) {
-        if (BuiltInTable.getInstance().isBuiltInFunction(node.getValue())) {
-            Error.error("Illegal use of function `%s`.", node.getValue());
-        }
+        final var symbol = symbolTable.lookup(node.getValue());
 
-        final var symbol = symbolTable.resolve(node.getValue());
-        if (symbol == null) {
-            Error.error("Symbol `%s` undefined.", node.getValue());
-            return;
-        }
-        if (symbolTable.existsFunction(symbol)) {
-            Error.error("Illegal use of function `%s`.", node.getValue());
-        }
         if (symbol.isGlobal()) {
             emit(OpCode.LOAD_G, symbol.getIndex(), out);
         } else {
@@ -325,24 +301,12 @@ public class Compiler {
     }
 
     private void compile(final FunctionNode node, final DataOutputStream out) {
-        if (symbolTable.existsOnCurrentScope(node.getName()) || BuiltInTable.getInstance().isBuiltInFunction(node.getName())) {
-            Error.error(String.format("Symbol `%s` is already defined on this scope.", node.getName()));
-        }
+        final var functionEntry = (UserFunctionEntry) symbolTable.lookup(node.getName()).getSymbolEntry();
 
-        final var symbol = symbolTable.define(node.getName());
-        symbolTable.enterFunctionScope();
+        final var prevSymbolTable = symbolTable;
+        symbolTable = functionEntry.getSymbolTable();
 
-        final var compileTimeFunction = new CompileTimeFunction(out.size(), node.getParameters().size(), symbolTable.getFunctionScope());
-        symbolTable.addFunction(symbol, compileTimeFunction);
-
-        var i = -node.getParameters().size();
-        for (IdentNode p : node.getParameters()) {
-            if (symbolTable.existsOnCurrentScope(p.getValue())) {
-                Error.error(String.format("Symbol `%s` is already defined on this scope.", p.getValue()));
-            }
-            symbolTable.defineParameter(p.getValue(), i);
-            i++;
-        }
+        functionEntry.setPosition(out.size());
 
         compile(node.getBody(), out);
 
@@ -350,18 +314,12 @@ public class Compiler {
         emit(OpCode.STORE_R, out);
         emit(OpCode.RET, out);
 
-        symbolTable.leaveFunctionScope();
+        symbolTable = prevSymbolTable;
     }
 
     private void compile(final CallNode node, final DataOutputStream out) {
         if (BuiltInTable.getInstance().isBuiltInFunction(node.getFunctionName())) {
             final var functionIndex = BuiltInTable.getInstance().getBuiltInFunctionIndex(node.getFunctionName());
-            final var function = BuiltInTable.getInstance().getBuiltInFunction(functionIndex);
-
-            if (function.getParametersCount() != node.getArguments().size()) {
-                Error.error("Wrong number of arguments to function `%s`. Expected %s, got %s.", node.getFunctionName(),
-                        function.getParametersCount(), node.getArguments().size());
-            }
 
             for (Node a : node.getArguments()) {
                 compile(a, out);
@@ -369,30 +327,14 @@ public class Compiler {
 
             emit(OpCode.CALL_B, functionIndex, out);
         } else {
-            final var symbol = symbolTable.resolve(node.getFunctionName());
-
-            if (symbol == null) {
-                Error.error("Symbol `%s` undefined.", node.getFunctionName());
-            }
-
-            final var compileTimeFunction = symbolTable.getFunction(symbol);
-
-            if (compileTimeFunction == null) {
-                Error.error("Symbol `%s` is not a function.", node.getFunctionName());
-                return;
-            }
-
-            if (node.getArguments().size() != compileTimeFunction.getParametersCount()) {
-                Error.error("Wrong number of arguments to function `%s`. Expected %s, got %s.", node.getFunctionName(),
-                        compileTimeFunction.getParametersCount(), node.getArguments().size());
-            }
+            final var functionEntry = (UserFunctionEntry) symbolTable.lookup(node.getFunctionName()).getSymbolEntry();
 
             for (Node a : node.getArguments()) {
                 compile(a, out);
             }
 
-            emit(OpCode.ASF, compileTimeFunction.getScope().getLocalsCount(), out);
-            emit(OpCode.CALL, compileTimeFunction.getPosition(), out);
+            emit(OpCode.ASF, functionEntry.getSymbolTable().getSymbolCount(), out);
+            emit(OpCode.CALL, functionEntry.getPosition(), out);
             emit(OpCode.RSF, out);
             emit(OpCode.POP, node.getArguments().size(), out);
             emit(OpCode.LOAD_R, out);

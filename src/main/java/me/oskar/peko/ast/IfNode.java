@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 public class IfNode extends Node {
 
     private final Node condition;
@@ -27,5 +29,10 @@ public class IfNode extends Node {
     @Override
     public String toString() {
         return String.format("(IF %s %s %s)", condition, consequence, alternative);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }

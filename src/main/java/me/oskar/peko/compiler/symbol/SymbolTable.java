@@ -1,63 +1,67 @@
 package me.oskar.peko.compiler.symbol;
 
-import me.oskar.peko.compiler.function.CompileTimeFunction;
-
 import java.util.HashMap;
 
 public class SymbolTable {
 
-    private final GlobalScope globalScope = new GlobalScope();
-    private final HashMap<Symbol, CompileTimeFunction> functions = new HashMap<>();
+    private int symbolIndex = 0;
+    private int builtInSymbolIndex = 0;
+    private int parameterSymbolIndex = -1;
+    private final SymbolTable parentTable;
+    private final HashMap<String, Symbol> symbols = new HashMap<>();
 
-    public Symbol define(final String name) {
-        return globalScope.define(name);
+    public SymbolTable(final SymbolTable parentTable, final int initialSymbolIndex) {
+        this.parentTable = parentTable;
+        this.symbolIndex = initialSymbolIndex;
     }
 
-    public Symbol resolve(final String name) {
-        return globalScope.resolve(name);
+    public SymbolTable(final SymbolTable parentTable) {
+        this.parentTable = parentTable;
     }
 
-    public boolean existsOnCurrentScope(final String name) {
-        return globalScope.existsOnCurrentScope(name);
+    public SymbolTable() {
+        this.parentTable = null;
     }
 
-    public boolean onGlobalScope() {
-        return globalScope.onGlobalScope();
+    public void enter(final String name, final SymbolEntry symbolEntry) {
+        final Symbol symbol = new Symbol(symbolIndex, parentTable == null, symbolEntry);
+        symbolIndex++;
+        symbols.put(name, symbol);
     }
 
-    public Symbol defineParameter(final String name, final int index) {
-        return globalScope.defineParameter(name, index);
+    public void enterBuiltIn(final String name, final BuiltInFunctionEntry builtInFunctionEntry) {
+        final Symbol symbol = new Symbol(builtInSymbolIndex, true, builtInFunctionEntry);
+        builtInSymbolIndex++;
+        symbols.put(name, symbol);
     }
 
-    public void enterFunctionScope() {
-        globalScope.enterFunctionScope();
+    public void enterParameter(final String name) {
+        final Symbol symbol = new Symbol(parameterSymbolIndex, false, new VariableEntry());
+        parameterSymbolIndex--;
+        symbols.put(name, symbol);
     }
 
-    public void leaveFunctionScope() {
-        globalScope.leaveFunctionScope();
+    public Symbol lookup(final String name) {
+        if (symbols.containsKey(name)) {
+            return symbols.get(name);
+        }
+
+        if (parentTable != null) {
+            return parentTable.lookup(name);
+        }
+
+        return null;
     }
 
-    public void enterBlockScope() {
-        globalScope.enterBlockScope();
+    public Symbol lookupOnThisTable(final String name) {
+        return symbols.get(name);
     }
 
-    public void leaveBlockScope() {
-        globalScope.leaveBlockScope();
+    public int getSymbolCount() {
+        return symbolIndex;
     }
 
-    public void addFunction(final Symbol symbol, final CompileTimeFunction function) {
-        functions.put(symbol, function);
-    }
-
-    public CompileTimeFunction getFunction(final Symbol symbol) {
-        return functions.get(symbol);
-    }
-
-    public boolean existsFunction(final Symbol symbol) {
-        return functions.containsKey(symbol);
-    }
-
-    public FunctionScope getFunctionScope() {
-        return globalScope.getFunctionScope();
+    public void increaseSymbolIndex(final int n) {
+        symbolIndex += n;
     }
 }

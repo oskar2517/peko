@@ -4,18 +4,14 @@ public class Symbol {
 
     private final int index;
     private final boolean global;
-    private boolean initialized = false;
+    private final SymbolEntry symbolEntry;
 
-    public Symbol(final int index, final boolean global) {
+    public Symbol(final int index, final boolean global, final SymbolEntry symbolEntry) {
         this.index = index;
         this.global = global;
+        this.symbolEntry = symbolEntry;
     }
 
-    public Symbol(final int index, final boolean global, final boolean initialized) {
-        this.index = index;
-        this.global = global;
-        this.initialized = initialized;
-    }
 
     public int getIndex() {
         return index;
@@ -25,16 +21,12 @@ public class Symbol {
         return global;
     }
 
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    public void initialize() {
-        initialized = true;
-    }
-
     @Override
     public String toString() {
         return String.format("(%s %s)", global, index);
+    }
+
+    public SymbolEntry getSymbolEntry() {
+        return symbolEntry;
     }
 }

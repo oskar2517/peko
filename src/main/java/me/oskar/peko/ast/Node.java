@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
-abstract public class Node {
+import me.oskar.peko.ast.visitor.Visitable;
+
+abstract public class Node implements Visitable {
 
 }

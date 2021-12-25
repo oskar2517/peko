@@ -180,10 +180,10 @@ public class Parser {
         expectToken(TokenType.LPAREN);
         nextToken();
 
-        final var parameters = new ArrayList<IdentNode>();
+        final var parameters = new ArrayList<ParameterDeclarationNode>();
         while (currentToken.getType() != TokenType.RPAREN) {
             if (currentToken.getType() == TokenType.IDENT) {
-                final var p = new IdentNode(currentToken.getLiteral());
+                final var p = new ParameterDeclarationNode(currentToken.getLiteral());
                 parameters.add(p);
                 if (lexer.peekToken().getType() != TokenType.COMMA && lexer.peekToken().getType() != TokenType.RPAREN) {
                     expectToken(TokenType.COMMA);

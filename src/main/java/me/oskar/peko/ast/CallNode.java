@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 import java.util.List;
 
 public class CallNode extends Node {
@@ -23,5 +25,10 @@ public class CallNode extends Node {
     @Override
     public String toString() {
         return String.format("(CALL %S %S)", functionName, arguments);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }

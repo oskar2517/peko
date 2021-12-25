@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 import java.util.ArrayList;
 
 public class FileNode extends Node {
@@ -35,5 +37,10 @@ public class FileNode extends Node {
     @Override
     public String toString() {
         return String.format("(FILE %s %s %s)", variables, functions, mainFunction);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }

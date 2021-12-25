@@ -1,5 +1,7 @@
 package me.oskar.peko.ast;
 
+import me.oskar.peko.ast.visitor.Visitor;
+
 public class UnaryOperatorNode extends Node {
 
     private final Node right;
@@ -22,5 +24,10 @@ public class UnaryOperatorNode extends Node {
     @Override
     public String toString() {
         return String.format("(%s %s)", type, right);
+    }
+
+    @Override
+    public void accept(final Visitor visitor) {
+        visitor.visit(this);
     }
 }
