@@ -9,40 +9,44 @@ public class Stack<E> {
     private final E[] stack= (E[])new Object[1024];
 
     public void push(final E o) {
-        if (sp >= stack.length) {
+        try {
+            stack[sp] = o;
+        } catch (ArrayIndexOutOfBoundsException e) {
             Error.error("Stack overflow.");
         }
-
-        stack[sp] = o;
         sp++;
     }
 
     public E pop() {
         sp--;
-        if (sp < 0) {
+
+        try {
+            return stack[sp];
+        } catch (ArrayIndexOutOfBoundsException e) {
             Error.error("Stack underflow.");
         }
 
-        final var v = stack[sp];
-        stack[sp] = null;
-
-        return v;
+        // Cannot be reached
+        return null;
     }
 
     public void set(final int index, final E o) {
-        if (index >= stack.length || index < 0) {
+        try {
+            stack[index] = o;
+        } catch (ArrayIndexOutOfBoundsException e) {
             Error.error("Stack size exceeded.");
         }
-
-        stack[index] = o;
     }
 
     public E get(final int index) {
-        if (index >= stack.length || index < 0) {
+        try {
+            return stack[index];
+        } catch (ArrayIndexOutOfBoundsException e) {
             Error.error("Stack size exceeded.");
         }
 
-        return stack[index];
+        // Cannot be reached
+        return null;
     }
 
     public void drop(final int amount) {
