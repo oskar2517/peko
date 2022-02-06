@@ -1,14 +1,25 @@
-package me.oskar.peko.vm;
+package me.oskar.peko.vm.stack;
 
 import me.oskar.peko.error.Error;
+import me.oskar.peko.object.PekoObject;
 
-public class Stack<E> {
+import java.util.Objects;
+
+public class Stack {
 
     private int sp = 0;
     private int fp = 0;
-    private final E[] stack= (E[])new Object[1024];
+    private final StackSlot<?>[] stack= new StackSlot[1000];
 
-    public void push(final E o) {
+    public void pushObject(final PekoObject o) {
+        push(new StackSlot<>(o));
+    }
+
+    public void pushNumber(final int n) {
+        push(new StackSlot<>(n));
+    }
+
+    private void push(final StackSlot<?> o) {
         try {
             stack[sp] = o;
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -17,7 +28,15 @@ public class Stack<E> {
         sp++;
     }
 
-    public E pop() {
+    public PekoObject popObject() {
+        return (PekoObject) Objects.requireNonNull(pop()).getValue();
+    }
+
+    public int popNumber() {
+        return (Integer) Objects.requireNonNull(pop()).getValue();
+    }
+
+    private StackSlot<?> pop() {
         sp--;
 
         try {
@@ -26,11 +45,15 @@ public class Stack<E> {
             Error.error("Stack underflow.");
         }
 
-        // Cannot be reached
+        // Unreachable
         return null;
     }
 
-    public void set(final int index, final E o) {
+    public void setObject(final int index, final PekoObject o) {
+        set(index, new StackSlot<>(o));
+    }
+
+    private void set(final int index, final StackSlot<?> o) {
         try {
             stack[index] = o;
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -38,14 +61,18 @@ public class Stack<E> {
         }
     }
 
-    public E get(final int index) {
+    public PekoObject getObject(final int index) {
+        return (PekoObject) Objects.requireNonNull(get(index)).getValue();
+    }
+
+    private StackSlot<?> get(final int index) {
         try {
             return stack[index];
         } catch (ArrayIndexOutOfBoundsException e) {
             Error.error("Stack size exceeded.");
         }
 
-        // Cannot be reached
+        // Unreachable
         return null;
     }
 

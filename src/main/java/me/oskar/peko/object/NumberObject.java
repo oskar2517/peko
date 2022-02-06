@@ -2,7 +2,7 @@ package me.oskar.peko.object;
 
 import me.oskar.peko.error.Error;
 
-public class NumberObject extends LObject {
+public class NumberObject extends PekoObject {
 
     private final double value;
 
@@ -24,7 +24,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject add(final LObject o) {
+    public PekoObject add(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new NumberObject(value + oc.getValue());
         } else {
@@ -33,7 +33,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject sub(final LObject o) {
+    public PekoObject sub(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new NumberObject(value - oc.getValue());
         } else {
@@ -42,7 +42,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject mul(final LObject o) {
+    public PekoObject mul(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new NumberObject(value * oc.getValue());
         } else {
@@ -51,7 +51,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject div(final LObject o) {
+    public PekoObject div(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             if (oc.getValue() == 0) {
                 Error.error("Division by zero.");
@@ -64,7 +64,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject mod(final LObject o) {
+    public PekoObject mod(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             if (oc.getValue() == 0) {
                 Error.error("Division by zero.");
@@ -77,7 +77,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject eq(final LObject o) {
+    public PekoObject eq(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value == oc.getValue());
         } else {
@@ -86,7 +86,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject ne(final LObject o) {
+    public PekoObject ne(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value != oc.getValue());
         } else {
@@ -95,7 +95,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject lt(final LObject o) {
+    public PekoObject lt(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value < oc.getValue());
         } else {
@@ -104,7 +104,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject le(final LObject o) {
+    public PekoObject le(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value <= oc.getValue());
         } else {
@@ -113,7 +113,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject gt(final LObject o) {
+    public PekoObject gt(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value > oc.getValue());
         } else {
@@ -122,7 +122,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject ge(final LObject o) {
+    public PekoObject ge(final PekoObject o) {
         if (o instanceof NumberObject oc) {
             return new BooleanObject(value >= oc.getValue());
         } else {
@@ -131,7 +131,7 @@ public class NumberObject extends LObject {
     }
 
     @Override
-    public LObject neg() {
+    public PekoObject neg() {
         return new NumberObject(-value);
     }
 }

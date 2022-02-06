@@ -1,6 +1,6 @@
 package me.oskar.peko.object;
 
-public class NilObject extends LObject {
+public class NilObject extends PekoObject {
 
     @Override
     public String toString() {
@@ -8,7 +8,7 @@ public class NilObject extends LObject {
     }
 
     @Override
-    public LObject eq(final LObject o) {
+    public PekoObject eq(final PekoObject o) {
         return new BooleanObject(o instanceof NilObject);
     }
 }

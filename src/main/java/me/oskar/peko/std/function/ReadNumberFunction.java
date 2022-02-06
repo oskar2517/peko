@@ -1,6 +1,6 @@
 package me.oskar.peko.std.function;
 
-import me.oskar.peko.object.LObject;
+import me.oskar.peko.object.PekoObject;
 import me.oskar.peko.object.NilObject;
 import me.oskar.peko.object.NumberObject;
 
@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class ReadNumberFunction implements Function {
 
     @Override
-    public LObject invoke(ArrayList<LObject> arguments) {
+    public PekoObject invoke(ArrayList<PekoObject> arguments) {
         try {
             var scanner = new Scanner(System.in);
 

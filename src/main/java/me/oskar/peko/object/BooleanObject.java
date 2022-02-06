@@ -1,6 +1,6 @@
 package me.oskar.peko.object;
 
-public class BooleanObject extends LObject {
+public class BooleanObject extends PekoObject {
 
     private final boolean value;
 
@@ -18,7 +18,7 @@ public class BooleanObject extends LObject {
     }
 
     @Override
-    public LObject eq(final LObject o) {
+    public PekoObject eq(final PekoObject o) {
         if (o instanceof BooleanObject oc) {
             return new BooleanObject(value == oc.getValue());
         } else {
@@ -27,7 +27,7 @@ public class BooleanObject extends LObject {
     }
 
     @Override
-    public LObject not() {
+    public PekoObject not() {
         return new BooleanObject(!value);
     }
 

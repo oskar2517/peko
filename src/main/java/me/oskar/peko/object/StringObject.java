@@ -1,6 +1,6 @@
 package me.oskar.peko.object;
 
-public class StringObject extends LObject {
+public class StringObject extends PekoObject {
 
     private final String value;
 
@@ -18,7 +18,7 @@ public class StringObject extends LObject {
     }
 
     @Override
-    public LObject add(final LObject o) {
+    public PekoObject add(final PekoObject o) {
         if (o instanceof StringObject oc) {
             return new StringObject(value + oc.value);
         } else {
@@ -27,7 +27,7 @@ public class StringObject extends LObject {
     }
 
     @Override
-    public LObject eq(final LObject o) {
+    public PekoObject eq(final PekoObject o) {
         if (o instanceof StringObject oc) {
             return new BooleanObject(value.equals(oc.value));
         } else {

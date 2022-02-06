@@ -2,78 +2,78 @@ package me.oskar.peko.object;
 
 import me.oskar.peko.error.Error;
 
-public class LObject {
+public class PekoObject {
 
-    public LObject add(final LObject o) {
+    public PekoObject add(final PekoObject o) {
         Error.error("Cannot perform operation `+` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject sub(final LObject o) {
+    public PekoObject sub(final PekoObject o) {
         Error.error("Cannot perform operation `-` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject mul(final LObject o) {
+    public PekoObject mul(final PekoObject o) {
         Error.error("Cannot perform operation `*` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject div(final LObject o) {
+    public PekoObject div(final PekoObject o) {
         Error.error("Cannot perform operation `/` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject mod(final LObject o) {
+    public PekoObject mod(final PekoObject o) {
         Error.error("Cannot perform operation `%s` on %s and %s.", "%", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject eq(final LObject o) {
+    public PekoObject eq(final PekoObject o) {
         Error.error("Cannot perform operation `==` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject ne(final LObject o) {
+    public PekoObject ne(final PekoObject o) {
         Error.error("Cannot perform operation `!=` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject lt(final LObject o) {
+    public PekoObject lt(final PekoObject o) {
         Error.error("Cannot perform operation `<` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject le(final LObject o) {
+    public PekoObject le(final PekoObject o) {
         Error.error("Cannot perform operation `<=` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject gt(final LObject o) {
+    public PekoObject gt(final PekoObject o) {
         Error.error("Cannot perform operation `>` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject ge(final LObject o) {
+    public PekoObject ge(final PekoObject o) {
         Error.error("Cannot perform operation `>=` on %s and %s.", getClass().getSimpleName(), o.getClass().getSimpleName());
         return null;
     }
 
-    public LObject getIndex(final LObject index) {
+    public PekoObject getIndex(final PekoObject index) {
         Error.error("Array access operator not supported on %s", getClass().getSimpleName());
         return null;
     }
 
-    public void setIndex(final LObject index, final LObject newValue) {
+    public void setIndex(final PekoObject index, final PekoObject newValue) {
         Error.error("Array access operator not supported on %s", getClass().getSimpleName());
     }
 
-    public LObject not() {
+    public PekoObject not() {
         Error.error("Cannot perform operation `!` on %s.", getClass().getSimpleName());
         return null;
     }
 
-    public LObject neg() {
+    public PekoObject neg() {
         Error.error("Cannot perform operation `-` on %s.", getClass().getSimpleName());
         return null;
     }

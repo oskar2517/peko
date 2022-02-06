@@ -66,9 +66,9 @@ public class ConstantPool {
         return buffer.toByteArray();
     }
 
-    public static LObject[] fromDataInputStream(final DataInputStream in) throws IOException {
+    public static PekoObject[] fromDataInputStream(final DataInputStream in) throws IOException {
         final var poolSize = in.readInt();
-        final var pool = new LObject[poolSize];
+        final var pool = new PekoObject[poolSize];
 
         for (int i = 0; i < poolSize; i++) {
             final var constantType = in.readByte();

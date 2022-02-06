@@ -1,12 +1,12 @@
 package me.oskar.peko.std.function;
 
-import me.oskar.peko.object.LObject;
+import me.oskar.peko.object.PekoObject;
 
 import java.util.ArrayList;
 
 public interface Function {
 
-    LObject invoke(final ArrayList<LObject> arguments);
+    PekoObject invoke(final ArrayList<PekoObject> arguments);
     String getName();
     int getParametersCount();
 }

@@ -10,11 +10,11 @@ import me.oskar.peko.ast.visitor.BaseVisitor;
 
 import java.util.Collections;
 
-public class SemanticAnalyser extends BaseVisitor {
+public class NameAnalysisVisitor extends BaseVisitor {
 
     private final SymbolTable currentSymbolTable;
 
-    public SemanticAnalyser(final SymbolTable currentSymbolTable) {
+    public NameAnalysisVisitor(final SymbolTable currentSymbolTable) {
         this.currentSymbolTable = currentSymbolTable;
     }
 
@@ -72,7 +72,7 @@ public class SemanticAnalyser extends BaseVisitor {
     @Override
     public void visit(final BlockNode blockNode) {
         final var blockSymbolTable = new SymbolTable(currentSymbolTable, currentSymbolTable.getSymbolCount());
-        final var blockSemanticAnalyser = new SemanticAnalyser(blockSymbolTable);
+        final var blockSemanticAnalyser = new NameAnalysisVisitor(blockSymbolTable);
 
         for (final var s : blockNode.getBody()) {
             s.accept(blockSemanticAnalyser);
@@ -165,7 +165,7 @@ public class SemanticAnalyser extends BaseVisitor {
             Error.error("Symbol `%s` already defined on this scope.", functionNode.getName());
         }
         final var localSymbolTable = new SymbolTable(currentSymbolTable);
-        final var localSemanticAnalyser = new SemanticAnalyser(localSymbolTable);
+        final var localSemanticAnalyser = new NameAnalysisVisitor(localSymbolTable);
 
         Collections.reverse(functionNode.getParameters());
         for (final var p : functionNode.getParameters()) {

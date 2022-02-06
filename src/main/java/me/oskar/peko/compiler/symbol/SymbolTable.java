@@ -6,7 +6,7 @@ public class SymbolTable {
 
     private int symbolIndex = 0;
     private int builtInSymbolIndex = 0;
-    private int parameterSymbolIndex = -1;
+    private int parameterSymbolIndex = -2;
     private final SymbolTable parentTable;
     private final HashMap<String, Symbol> symbols = new HashMap<>();
 

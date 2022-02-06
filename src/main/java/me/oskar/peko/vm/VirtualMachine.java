@@ -4,24 +4,25 @@ import me.oskar.peko.code.OpCode;
 import me.oskar.peko.compiler.constant.ConstantPool;
 import me.oskar.peko.error.Error;
 import me.oskar.peko.object.ArrayObject;
-import me.oskar.peko.object.LObject;
+import me.oskar.peko.object.PekoObject;
 import me.oskar.peko.std.BuiltInTable;
+import me.oskar.peko.vm.stack.Stack;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class VirtualMachine {
 
     private final byte[] bytecode;
-    private LObject[] constantPool;
+    private PekoObject[] constantPool;
     private ByteBuffer instructions;
-    private final Stack<LObject> stack = new Stack<>();
-    private final Stack<Integer> callStack = new Stack<>();
-    private LObject[] globals;
-    private LObject returnRegister;
+    private final Stack stack = new Stack();
+    private PekoObject[] globals;
+    private PekoObject returnRegister;
 
     public VirtualMachine(final byte[] bytecode) throws IOException {
         this.bytecode = bytecode;
@@ -31,13 +32,13 @@ public class VirtualMachine {
 
     private void init() throws IOException {
         final var in = new DataInputStream(new ByteArrayInputStream(bytecode));
-        if (in.readInt() != 0xC0DE) {
+        if (!new String(in.readNBytes(4), StandardCharsets.UTF_8).equals("peko")) {
             Error.error("Unexpected magic number. This file does not seem to contain Peko bytecode.");
         }
         constantPool = ConstantPool.fromDataInputStream(in);
 
         final var globalsCount = in.readInt();
-        globals = new LObject[globalsCount];
+        globals = new PekoObject[globalsCount];
 
         final var functionsPosition = in.readInt();
         instructions = ByteBuffer.wrap(in.readAllBytes());
@@ -54,60 +55,60 @@ public class VirtualMachine {
         final var opCode = instructions.get();
 
         switch (opCode) {
-            case OpCode.CONST -> {
+            case OpCode.CONSTANT -> {
                 final var index = instructions.getInt();
-                stack.push(constantPool[index]);
+                stack.pushObject(constantPool[index]);
             }
-            case OpCode.LOAD_G -> {
+            case OpCode.LOAD_GLOBAL -> {
                 final var index = instructions.getInt();
-                stack.push(globals[index]);
+                stack.pushObject(globals[index]);
             }
-            case OpCode.STORE_G -> {
+            case OpCode.STORE_GLOBAL -> {
                 final var index = instructions.getInt();
-                final var value = stack.pop();
+                final var value = stack.popObject();
                 globals[index] = value;
             }
-            case OpCode.LOAD_L -> {
+            case OpCode.LOAD_LOCAL -> {
                 final var index = instructions.getInt();
 
-                final var value = stack.get(stack.getFp() + index);
-                stack.push(value);
+                final var value = stack.getObject(stack.getFp() + index);
+                stack.pushObject(value);
             }
-            case OpCode.STORE_L -> {
+            case OpCode.STORE_LOCAL -> {
                 final var index = instructions.getInt();
 
-                final var value = stack.pop();
-                stack.set(stack.getFp() + index, value);
+                final var value = stack.popObject();
+                stack.setObject(stack.getFp() + index, value);
             }
-            case OpCode.LOAD_A -> {
-                final var index = stack.pop();
-                final var target = stack.pop();
+            case OpCode.LOAD_INDEX -> {
+                final var index = stack.popObject();
+                final var target = stack.popObject();
 
-                stack.push(target.getIndex(index));
+                stack.pushObject(target.getIndex(index));
             }
-            case OpCode.STORE_A -> {
-                final var value = stack.pop();
-                final var index = stack.pop();
-                final var target = stack.pop();
+            case OpCode.STORE_INDEX -> {
+                final var value = stack.popObject();
+                final var index = stack.popObject();
+                final var target = stack.popObject();
 
                 target.setIndex(index, value);
             }
-            case OpCode.JMP -> {
+            case OpCode.JUMP -> {
                 final var offset = instructions.getInt();
 
                 instructions.position(instructions.position() + offset);
             }
-            case OpCode.BRF -> {
+            case OpCode.JUMP_IF_TRUE -> {
                 final var offset = instructions.getInt();
-                final var value = stack.pop();
+                final var value = stack.popObject();
 
                 if (!value.isTruthy()) {
                     instructions.position(instructions.position() + offset);
                 }
             }
-            case OpCode.BRT -> {
+            case OpCode.JUMP_IF_FALSE -> {
                 final var offset = instructions.getInt();
-                final var value = stack.pop();
+                final var value = stack.popObject();
 
                 if (value.isTruthy()) {
                     instructions.position(instructions.position() + offset);
@@ -116,131 +117,129 @@ public class VirtualMachine {
             case OpCode.CALL -> {
                 final var position = instructions.getInt();
 
-                callStack.push(instructions.position());
+                stack.pushNumber(instructions.position());
                 instructions.position(position);
             }
-            case OpCode.CALL_B -> {
+            case OpCode.CALL_BUILTIN -> {
                 final var index = instructions.getInt();
                 final var function = BuiltInTable.getInstance().getBuiltInFunction(index);
 
-                final var arguments = new ArrayList<LObject>();
+                final var arguments = new ArrayList<PekoObject>();
                 for (var i = 0; i < function.getParametersCount(); i++) {
-                    arguments.add(stack.pop());
+                    arguments.add(stack.popObject());
                 }
 
-                stack.push(function.invoke(arguments));
+                stack.pushObject(function.invoke(arguments));
             }
-            case OpCode.RET -> {
-                final var position = callStack.pop();
+            case OpCode.RETURN -> {
+                final var position = stack.popNumber();
 
                 instructions.position(position);
             }
-            case OpCode.LOAD_R -> stack.push(returnRegister);
-            case OpCode.STORE_R -> returnRegister = stack.pop();
-            case OpCode.ASF -> {
+            case OpCode.LOAD_RETURN -> stack.pushObject(returnRegister);
+            case OpCode.STORE_RETURN -> returnRegister = stack.popObject();
+            case OpCode.ALLOCATE_STACK_FRAME -> {
                 final var locals = instructions.getInt();
 
-                callStack.push(stack.getFp());
+                stack.pushNumber(stack.getFp());
                 stack.setFp(stack.getSp());
                 stack.setSp(stack.getSp() + locals);
             }
-            case OpCode.RSF -> {
+            case OpCode.RESET_STACK_FRAME -> {
                 stack.setSp(stack.getFp());
-                stack.setFp(callStack.pop());
+                stack.setFp(stack.popNumber());
             }
-            case OpCode.POP -> {
+            case OpCode.DROP -> {
                 final var amount = instructions.getInt();
 
                 stack.drop(amount);
             }
             case OpCode.ADD -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.add(right));
+                stack.pushObject(left.add(right));
             }
             case OpCode.SUB -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.sub(right));
+                stack.pushObject(left.sub(right));
             }
             case OpCode.MUL -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.mul(right));
+                stack.pushObject(left.mul(right));
             }
             case OpCode.DIV -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.div(right));
+                stack.pushObject(left.div(right));
             }
-            case OpCode.MOD -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.REM -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.mod(right));
+                stack.pushObject(left.mod(right));
             }
-            case OpCode.EQ -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.EQUALS -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.eq(right));
+                stack.pushObject(left.eq(right));
             }
-            case OpCode.NE -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.NOT_EQUALS -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.ne(right));
+                stack.pushObject(left.ne(right));
             }
-            case OpCode.LT -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.LESS_THAN -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.lt(right));
+                stack.pushObject(left.lt(right));
             }
-            case OpCode.LE -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.LESS_THAN_OR_EQUAL -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.le(right));
+                stack.pushObject(left.le(right));
             }
-            case OpCode.GT -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.GREATER_THAN -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.gt(right));
+                stack.pushObject(left.gt(right));
             }
-            case OpCode.GE -> {
-                final var right = stack.pop();
-                final var left = stack.pop();
+            case OpCode.GREATER_THAN_OR_EQUAL -> {
+                final var right = stack.popObject();
+                final var left = stack.popObject();
 
-                stack.push(left.ge(right));
+                stack.pushObject(left.ge(right));
             }
             case OpCode.NOT -> {
-                final var right = stack.pop();
+                final var right = stack.popObject();
 
-                stack.push(right.not());
+                stack.pushObject(right.not());
             }
             case OpCode.NEG -> {
-                final var right = stack.pop();
+                final var right = stack.popObject();
 
-                stack.push(right.neg());
+                stack.pushObject(right.neg());
             }
-            case OpCode.HALT -> {
-                System.exit(0);
-            }
-            case OpCode.ARRAY -> {
+            case OpCode.HALT -> System.exit(0);
+            case OpCode.CONSTRUCT_ARRAY -> {
                 final var size = instructions.getInt();
 
-                final var value = new ArrayList<LObject>();
+                final var value = new ArrayList<PekoObject>();
                 for (int i = 0; i < size; i++) {
-                    value.add(0, stack.pop());
+                    value.add(0, stack.popObject());
                 }
 
-                stack.push(new ArrayObject(value));
+                stack.pushObject(new ArrayObject(value));
             }
         }
     }

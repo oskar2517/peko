@@ -5,15 +5,15 @@ import me.oskar.peko.error.Error;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ArrayObject extends LObject {
+public class ArrayObject extends PekoObject {
 
-    private final ArrayList<LObject> value;
+    private final ArrayList<PekoObject> value;
 
-    public ArrayObject(final ArrayList<LObject> value) {
+    public ArrayObject(final ArrayList<PekoObject> value) {
         this.value = value;
     }
 
-    public ArrayList<LObject> getValue() {
+    public ArrayList<PekoObject> getValue() {
         return value;
     }
 
@@ -23,12 +23,12 @@ public class ArrayObject extends LObject {
     }
 
     @Override
-    public LObject eq(final LObject o) {
+    public PekoObject eq(final PekoObject o) {
         return new BooleanObject(this == o);
     }
 
     @Override
-    public LObject getIndex(final LObject index) {
+    public PekoObject getIndex(final PekoObject index) {
         if (index instanceof NumberObject n) {
             try {
                 final var o = value.get((int) n.getValue());
@@ -46,7 +46,7 @@ public class ArrayObject extends LObject {
     }
 
     @Override
-    public void setIndex(final LObject index, final LObject newValue) {
+    public void setIndex(final PekoObject index, final PekoObject newValue) {
         if (index instanceof NumberObject n) {
             while (n.getValue() >= value.size()) {
                 value.add(new NilObject());

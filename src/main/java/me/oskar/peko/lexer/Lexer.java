@@ -213,7 +213,7 @@ public class Lexer {
                     return new Token(TokenType.EOF, String.valueOf(EOF));
                 }
                 if (LexerUtils.isNumber(currentChar)) {
-                    return new Token(TokenType.NUMBER, readNumber());
+                    return new Token(TokenType.NUMBER, readNumber()); // 2.34 2345
                 }
                 if (LexerUtils.isAlphaNumeric(currentChar)) {
                     final var ident = readIdent();

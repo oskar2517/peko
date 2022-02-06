@@ -1,17 +1,6 @@
 package me.oskar.peko.compiler.symbol;
 
-public class Symbol {
-
-    private final int index;
-    private final boolean global;
-    private final SymbolEntry symbolEntry;
-
-    public Symbol(final int index, final boolean global, final SymbolEntry symbolEntry) {
-        this.index = index;
-        this.global = global;
-        this.symbolEntry = symbolEntry;
-    }
-
+public record Symbol(int index, boolean global, SymbolEntry symbolEntry) {
 
     public int getIndex() {
         return index;

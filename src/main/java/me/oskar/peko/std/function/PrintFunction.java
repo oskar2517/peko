@@ -1,6 +1,6 @@
 package me.oskar.peko.std.function;
 
-import me.oskar.peko.object.LObject;
+import me.oskar.peko.object.PekoObject;
 import me.oskar.peko.object.NilObject;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class PrintFunction implements Function {
 
     @Override
-    public LObject invoke(ArrayList<LObject> arguments) {
+    public PekoObject invoke(ArrayList<PekoObject> arguments) {
         System.out.print(arguments.get(0));
 
         return new NilObject();
