@@ -89,7 +89,7 @@ public class CodeGeneratorVisitor extends BaseVisitor {
                 emit(OpCode.JUMP_IF_TRUE, rightBytes.size() + 5);
                 writeToOut(rightBytes.toByteArray());
                 emit(OpCode.JUMP, 5);
-                emit(OpCode.CONSTANT, constantPool.addConstant(false));
+                emit(OpCode.CONSTANT, constantPool.addBooleanConstant(false));
             }
             case OR -> {
                 binaryOperatorNode.getLeft().accept(this);
@@ -103,7 +103,7 @@ public class CodeGeneratorVisitor extends BaseVisitor {
                 emit(OpCode.JUMP_IF_FALSE, rightBytes.size() + 5);
                 writeToOut(rightBytes.toByteArray());
                 emit(OpCode.JUMP, 5);
-                emit(OpCode.CONSTANT, constantPool.addConstant(true));
+                emit(OpCode.CONSTANT, constantPool.addBooleanConstant(true));
             }
             case ADD -> {
                 binaryOperatorNode.getLeft().accept(this);
@@ -177,7 +177,7 @@ public class CodeGeneratorVisitor extends BaseVisitor {
 
     @Override
     public void visit(final BooleanNode booleanNode) {
-        final var index = constantPool.addConstant(booleanNode.getValue());
+        final var index = constantPool.addBooleanConstant(booleanNode.getValue());
         emit(OpCode.CONSTANT, index);
     }
 
@@ -303,7 +303,7 @@ public class CodeGeneratorVisitor extends BaseVisitor {
 
     @Override
     public void visit(final NumberNode numberNode) {
-        final var index = constantPool.addConstant(numberNode.getValue());
+        final var index = constantPool.addNumberConstant(numberNode.getValue());
         emit(OpCode.CONSTANT, index);
     }
 
@@ -321,7 +321,7 @@ public class CodeGeneratorVisitor extends BaseVisitor {
 
     @Override
     public void visit(final StringNode stringNode) {
-        final var index = constantPool.addConstant(stringNode.getValue());
+        final var index = constantPool.addStringConstant(stringNode.getValue());
         emit(OpCode.CONSTANT, index);
     }
 

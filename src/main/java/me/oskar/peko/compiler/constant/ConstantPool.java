@@ -23,15 +23,15 @@ public class ConstantPool {
         return constants.size() - 1;
     }
 
-    public int addConstant(final double value) {
+    public int addNumberConstant(final double value) {
         return addConstant(new NumberConstant(value));
     }
 
-    public int addConstant(final boolean value) {
+    public int addBooleanConstant(final boolean value) {
         return addConstant(new BooleanConstant(value));
     }
 
-    public int addConstant(final String value) {
+    public int addStringConstant(final String value) {
         return addConstant(new StringConstant(value));
     }
 
