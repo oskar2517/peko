@@ -16,7 +16,7 @@ public class ReturnNode extends Node {
 
     @Override
     public String toString() {
-        return String.format("RET %s", value);
+        return String.format("(RET %s)", value);
     }
 
     @Override

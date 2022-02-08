@@ -6,7 +6,7 @@ public class NilNode extends Node {
 
     @Override
     public String toString() {
-        return "nil";
+        return "(NIL)";
     }
 
     @Override

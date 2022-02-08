@@ -16,7 +16,7 @@ public class StringNode extends Node {
 
     @Override
     public String toString() {
-        return String.format("STRING %s", value);
+        return String.format("(STRING %s)", value);
     }
 
     @Override

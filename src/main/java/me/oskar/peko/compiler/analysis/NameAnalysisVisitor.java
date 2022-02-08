@@ -165,16 +165,16 @@ public class NameAnalysisVisitor extends BaseVisitor {
             Error.error("Symbol `%s` already defined on this scope.", functionNode.getName());
         }
         final var localSymbolTable = new SymbolTable(currentSymbolTable);
-        final var localSemanticAnalyser = new NameAnalysisVisitor(localSymbolTable);
+        final var localNameAnalysisVisitor = new NameAnalysisVisitor(localSymbolTable);
 
         Collections.reverse(functionNode.getParameters());
         for (final var p : functionNode.getParameters()) {
-            p.accept(localSemanticAnalyser);
+            p.accept(localNameAnalysisVisitor);
         }
         final var functionEntry = new UserFunctionEntry(functionNode.getParameters().size(), localSymbolTable);
         currentSymbolTable.enter(functionNode.getName(), functionEntry);
 
-        functionNode.getBody().accept(localSemanticAnalyser);
+        functionNode.getBody().accept(localNameAnalysisVisitor);
     }
 
     @Override

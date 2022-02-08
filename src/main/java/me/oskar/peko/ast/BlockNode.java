@@ -34,6 +34,7 @@ public class BlockNode extends Node {
             s.append(" ");
             s.append(node.toString());
         }
+        s.append(")");
 
         return s.toString();
     }
