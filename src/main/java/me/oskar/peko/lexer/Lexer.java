@@ -66,15 +66,13 @@ public class Lexer {
      * @return The identifier.
      */
     private String readIdent() {
-        var s = new StringBuilder();
-        s.append(currentChar);
+        final int startPosition = position;
 
         while (LexerUtils.isAlphaNumeric(peekChar())) {
             readChar();
-            s.append(currentChar);
         }
 
-        return s.toString();
+        return code.substring(startPosition - 1, position);
     }
 
     /**
@@ -83,15 +81,17 @@ public class Lexer {
      */
     private String readString() {
         readChar();
+        final int startPosition = position;
 
-        var s = new StringBuilder();
+        if (currentChar != '\"') {
+            while (peekChar() != '\"' && peekChar() != EOF) {
+                readChar();
+            }
 
-        while (currentChar != '\"' && currentChar != EOF) {
-            s.append(currentChar);
             readChar();
         }
 
-        return s.toString();
+        return code.substring(startPosition - 1, position - 1);
     }
 
     /**
@@ -99,15 +99,21 @@ public class Lexer {
      * @return The number.
      */
     private String readNumber() {
-        var s = new StringBuilder();
-        s.append(currentChar);
+        final int startPosition = position;
 
-        while (LexerUtils.isNumber(peekChar()) || peekChar() == '.') {
+        while (LexerUtils.isNumber(peekChar())) {
             readChar();
-            s.append(currentChar);
         }
 
-        return s.toString();
+        if (peekChar() == '.') {
+            readChar();
+
+            while (LexerUtils.isNumber(peekChar())) {
+                readChar();
+            }
+        }
+
+        return code.substring(startPosition - 1, position);
     }
 
     /**
